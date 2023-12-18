@@ -1,38 +1,125 @@
-.App {
-  text-align: center;
+html, body{ 
+  height: 100%;
+  width: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.body {
+  background-color: #5383E8;
+  padding: 50px 0 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  height:100%;
+  width:100%;
 }
 
-.App-link {
-  color: #61dafb;
+.formGroup > .formLabel {
+  font-weight: 700;
+  font-size: 12px;
+  font-family: 'Roboto', 'sans-serif';
+  margin: 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.formGroup > .summonerInput {
+  font-size: 14px;
+  border: none;
+  padding-left: 0;
+  width: 460px;
+}
+
+.formGroup > .summonerInput::placeholder {
+  color: #9AA4AF
+}
+
+.formGroup > .summonerInput:focus, .regionDropdown:focus, .regionDropdown:focus-within, .regionDropdown:focus-visible {
+  box-shadow: none;
+  border: none 0 transparent;
+  outline: none;
+}
+
+.homeSearch {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  align-items: center;
+  height:60px;
+  padding: 5px 30px;
+  border-radius: 40px;
+  margin: 24px 0px;
+}
+
+.col.divider {
+  margin-top: 20px;
+  width: 1px;
+  height: 14px;
+  right: 0px;
+  display: block;
+  background-color: #EBEEF1;
+  padding: 0;
+}
+
+.regionSelectDiv > .regionDropdown {
+  border: 0;
+  margin: 0;
+  padding-left: 0;
+  width: fit-content;
+  font-size: 14px;      
+  color: #9AA4AF;
+}
+
+.btn-col.col {
+  padding: 0;
+}
+
+.col > .gg-btn {
+  background-color: transparent; 
+  border: none;
+  width: 90px;
+  height: 60px;
+  padding: 0;
+
+}
+
+.gg-btn > img { 
+  width: 42px;
+  height: 42px;
+}
+
+.btn.gg-btn.btn-primary:hover {
+  background-color: transparent;
+}
+
+.btn.gg-btn.btn-primary:active {
+  background-color: transparent;
+  transform: none;
+}
+
+#leagueNavBar {
+  border-bottom: 1px solid #4171D6;
+  padding: 0;
+  margin: 0;
+}
+
+#leagueNav > .leagueNavLink {
+  color: #B3CDFF;
+  padding: 13px 0 10px 0;
+  margin:0;
+}
+
+#leagueNav > .active {
+  color: white ;
 }
