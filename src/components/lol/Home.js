@@ -36,11 +36,12 @@ function SearchBar() {
                         <Form.Group className="summonerName formGroup ">
                             <Form.Label className="formLabel">Search</Form.Label>
                             <Form.Control className="summonerInput" placeholder={`Game Name + #${selectedRegion}`} 
-                                onChange={(event) => {setRiotID(event.target.value)}} />
+                                onChange={(event) => {setRiotID(event.target.value)}}
+                            />
                         </Form.Group>
                     </Col>
                     <Col className="btn-col">
-                        <Button className='gg-btn' type='submit' onClick={() => {console.log(riotID); SummonerInfo()}}>
+                        <Button className='gg-btn' type='submit' onClick={() => {SummonerInfo(riotID)}}>
                             <img src={ggBtn} />
                         </Button>
                     </Col>
