@@ -3,12 +3,11 @@ import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
-import { useLeagueTabContext, useUpdateLeagueTabContext } from '../LeagueTabContext';
+import { useLeagueTabContext, useUpdateLeagueTabContext } from './LeagueTabContext';
 
 function LeagueNav() {
   const currTab = useLeagueTabContext();
   const updateCurrTab = useUpdateLeagueTabContext();
-  console.log(currTab);
     return (
       <>
         <Navbar 

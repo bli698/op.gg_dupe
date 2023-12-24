@@ -41,7 +41,11 @@ code {
   width: 460px;
 }
 
-.formGroup > .summonerInput::placeholder {
+#miniSearch > .summonerInput {
+  width: 840px;
+}
+
+.formGroup > .summonerInput::placeholder, #miniSearch > .summonerInput::placeholder {
   color: #9AA4AF
 }
 
@@ -51,7 +55,37 @@ code {
   outline: none;
 }
 
-.homeSearch {
+#miniSearch > * {
+  box-shadow: none;
+  border: none 0 transparent;
+  outline: none;
+  font-size: 12px;
+  font-weight: 400;
+  font-family: 'Roboto';
+}
+
+#miniSearch > .form-select {
+  width: fit-content;
+  background-color: #ECF2FF;
+  color: #5383E8;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#miniSearch > .form-select > option {
+  color: #44515C;
+}
+
+
+
+
+.searchRow {
+  display: flex;
+  justify-content: center;
+  background-color: #5383E8;
+}
+
+#homeSearch {
   display: flex;
   flex-direction: row;
   background-color: white;
@@ -60,6 +94,17 @@ code {
   padding: 5px 30px;
   border-radius: 40px;
   margin: 24px 0px;
+}
+
+#miniSearch {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  align-items: center;
+  margin: 10px;
+  height: 32px;
+  border-radius: 10px;
+
 }
 
 .col.divider {
@@ -85,25 +130,35 @@ code {
   padding: 0;
 }
 
-.col > .gg-btn {
+.btn.gg-btn.btn-primary {
   background-color: transparent; 
   border: none;
   width: 90px;
   height: 60px;
   padding: 0;
+}
 
+.btn.minisearch-gg-btn.btn-primary {
+  background-color: transparent;
+  border: none;
+}
+
+.minisearch-gg-btn > img {
+  height: 28px;
+  width: 38px;
 }
 
 .gg-btn > img { 
+  margin-left: 30px;
   width: 42px;
   height: 42px;
 }
 
-.btn.gg-btn.btn-primary:hover {
+.btn.gg-btn.btn-primary:hover, .btn.minisearch-gg-btn.btn-primary:hover {
   background-color: transparent;
 }
 
-.btn.gg-btn.btn-primary:active {
+.btn.gg-btn.btn-primary:active, .btn.minisearch-gg-btn.btn-primary:active {
   background-color: transparent;
   transform: none;
 }
@@ -122,4 +177,37 @@ code {
 
 #leagueNav > .active {
   color: white ;
+}
+
+.playerHeader {
+  display: flex;
+  flex: 1 1 0%;
+  box-sizing: border-box;
+  padding: 10px 10px 16px 0px;
+  justify-content: center;
+}
+
+.playerIcon {
+  margin-top: 32px;
+  width: 100px;
+  height: 100px;
+  flex-basis: 100px;
+  position: relative;
+  text-align: center;
+}
+
+span.level {
+  display: inline-block;
+  line-height: 20px;
+  padding: 0px 8px;
+  font-size: 12px;
+  border-radius: 10px;
+  color: white;
+  background-color: #202D37;
+  font-family: 'Roboto', sans-serif;
+}
+
+div.level {
+  height: 20px;
+  margin-top: -11px;
 }

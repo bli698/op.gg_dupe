@@ -1,4 +1,4 @@
-export function Copyright() {
+export default function Copyright() {
     return (
         <footer 
             style={{width:'50%',

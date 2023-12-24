@@ -2,20 +2,23 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import logoLight from '../../images/logoLight.png';
-import GameNav from '../GameNav';
-import LeagueNav from './LeagueNav';
-import ggBtn from '../../images/searchbutton-gg.svg';
+import logoLight from '../../../images/logoLight.png';
+import GameNav from '../../GameNav';
+import LeagueNav from '../LeagueNav';
+import ggBtn from '../../../images/searchbutton-gg.svg';
 import { useState } from 'react';
-import { Copyright } from '../Copyright';
-import { useRegionContext, useUpdateRegionContext } from '../RegionContext';
-import { SummonerInfo } from './SummonerInfo';
+import Copyright from '../../Copyright';
+import { useRegionContext, useUpdateRegionContext } from '../../RegionContext';
+import { SummonerInfo } from '../ProxyCalls';
+import { useNavigate } from 'react-router-dom';
+
 function SearchBar() {
     const selectedRegion = useRegionContext();
     const updateSelectedRegion = useUpdateRegionContext();
     const [riotID, setRiotID] = useState('');
+    const navigate = useNavigate();
     return (
-        <div className="homeSearch">
+        <div id="homeSearch">
             <Form onSubmit={(e) => {e.preventDefault()}}>
                 <Row>
                     <Col>
@@ -41,7 +44,7 @@ function SearchBar() {
                         </Form.Group>
                     </Col>
                     <Col className="btn-col">
-                        <Button className='gg-btn' type='submit' onClick={() => {SummonerInfo(riotID)}}>
+                        <Button className='gg-btn' type='submit' onClick={() => {navigate(`/summoners/${riotID.replace('#','-')}`); }}>
                             <img src={ggBtn} />
                         </Button>
                     </Col>
