@@ -60,6 +60,7 @@
 
 import { useParams } from "react-router-dom";
 import Form  from "react-bootstrap/Form";
+import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
@@ -68,12 +69,12 @@ import Copyright from '../../Copyright';
 import GameNav from "../../GameNav";
 import LeagueNav from "../LeagueNav";
 import logoLight from "../../../images/logoLight.png";
-import { SummonerInfo } from "../ProxyCalls";
+import { SummonerInfo, RankInfo } from "../ProxyCalls";
 import { useRegionContext, useUpdateRegionContext } from "../../RegionContext";
 import { useLeagueTabContext, useUpdateLeagueTabContext } from "../LeagueTabContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-
+import emerald from "../../../images/RankedEmblemsLatest/RankEmerald.png"
 
 function MiniSearchBar() {
    const selectedRegion = useRegionContext();
@@ -103,21 +104,7 @@ function MiniSearchBar() {
    )
 }
 
-function PlayerHeader() {
-   const [playerObj, setPlayerObj] = useState({});
-   const params = useParams();
-   useEffect(() => {
-      /* gets level (summonerLevel), previous name (name), profile icon (profileIconId),
-
-      */ 
-      async function getSummInfo() {
-         const res = await SummonerInfo(params.name);
-         setPlayerObj(res);
-         console.log(res);
-      };
-
-      getSummInfo();
-   }, []);
+function PlayerHeader({playerObj}) {
    
    return (
       <div className="playerHeader">
@@ -135,11 +122,64 @@ function PlayerHeader() {
 
 }
 
+function PlayerRank({playerObj}){
+   const [rankData, setRankData] = useState();
+
+   const rankIMGTable = {
+      "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
+      "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
+      "SILVER": "/RankedEmblemsLatest/Rank=Silver.png",
+      "GOLD": "/RankedEmblemsLatest/Rank=Gold.png",
+      "PLATINUM": "/images/RankedEmblemsLatest/Rank=Platinum.png",
+      "EMERALD": "/RankedEmblemsLatest/RankEmerald.png",
+      "DIAMOND": "/RankedEmblemsLatest/Rank=Diamond.png",
+      "MASTER": "/RankedEmblemsLatest/Rank=Master.png",
+      "GRANDMASTER": "/RankedEmblemsLatest/Rank=Grandmaster.png",
+      "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
+   }
+
+   useEffect(()=>{
+
+      async function getRankInfo(){
+         const data = await RankInfo(playerObj.id);
+         setRankData(data);
+      }
+      getRankInfo();
+   }, 
+   [playerObj])
+
+
+   return(<Container>
+      <Row>
+        <Col> <img src={rankData ?rankData[0]? rankIMGTable[rankData[0]["tier"]]: "" : ""} /></Col>
+        <Col>
+            <Row>HAHA1</Row>
+            <Row>HAHA2</Row>
+        </Col>
+      </Row>
+    </Container>
+    )
+}
+
 function Summoner() {
    const currTab = useLeagueTabContext();
    const updateCurrTab = useUpdateLeagueTabContext();
    updateCurrTab(null);
+
+   const [playerObj, setPlayerObj] = useState({});
    const params = useParams();
+
+   useEffect(() => {
+      async function getSummInfo() {
+         const res = await SummonerInfo(params.name);
+         setPlayerObj(res);
+
+         console.log(res);
+      };
+
+      getSummInfo();
+   }, []);
+
    return (
       <>
          <GameNav />
@@ -148,7 +188,8 @@ function Summoner() {
             <MiniSearchBar />
          </div>
          <LeagueNav />
-         <PlayerHeader />
+         <PlayerHeader playerObj={playerObj} />
+         <PlayerRank playerObj = {playerObj}/>
       </>
    )
 }

@@ -7,7 +7,19 @@ export function SummonerInfo(riotID) {
     //     console.log(res.data);
     // };
     // fetchData();
-    const promise = axios.get(`http://localhost:5000/getByRiotID/${splitID[0]}/${splitID[1]}`).then((response) =>  response.data)
+    const promise = axios.get(`http://localhost:5000/getByRiotID/${splitID[0]}/${splitID[1]}`)
+    .then((response) =>  
+        response.data
+    )
+    
+    return promise;
+}
+
+export function RankInfo(encryptedID) {
+    const promise = axios.get(`http://localhost:5000/getRankWR/${encryptedID}`)
+    .then((response) =>  
+        response.data
+    )
     
     return promise;
 }
