@@ -74,7 +74,6 @@ import { useRegionContext, useUpdateRegionContext } from "../../RegionContext";
 import { useLeagueTabContext, useUpdateLeagueTabContext } from "../LeagueTabContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import emerald from "../../../images/RankedEmblemsLatest/RankEmerald.png"
 
 function MiniSearchBar() {
    const selectedRegion = useRegionContext();
@@ -138,26 +137,43 @@ function PlayerRank({playerObj}){
       "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
    }
 
+   function fixCasing(tierName){
+      const allLower = tierName.toLowerCase();
+      return allLower.charAt(0).toUpperCase() + allLower.slice(1);
+   }
+
    useEffect(()=>{
 
       async function getRankInfo(){
          const data = await RankInfo(playerObj.id);
          setRankData(data);
+         console.log(data)
       }
       getRankInfo();
    }, 
    [playerObj])
 
 
-   return(<Container>
-      <Row>
-        <Col> <img src={rankData ?rankData[0]? rankIMGTable[rankData[0]["tier"]]: "" : ""} /></Col>
-        <Col>
-            <Row>HAHA1</Row>
-            <Row>HAHA2</Row>
-        </Col>
-      </Row>
-    </Container>
+   return(
+   rankData ?
+      rankData[0]?
+         <Container>
+            <Row xs={3} sm={6}>
+               <Col> <img id = "rankImg" src={rankIMGTable[rankData[0]["tier"]]}/></Col>
+               <Col>
+                     <Row>
+                        <Col> {fixCasing(rankData[0]["tier"])} {rankData[0]["rank"]}</Col>
+                        <Col> {rankData[0]["wins"]}W {rankData[0]["losses"]}L</Col>
+                     </Row>
+                     <Row>
+                        <Col>{rankData[0]["leaguePoints"]} LP</Col>
+                        <Col>{(rankData[0]["wins"]/(rankData[0]["wins"] + rankData[0]["losses"]) * 100).toFixed(0)} %</Col>
+                     </Row>
+               </Col>
+            </Row>
+         </Container>
+      :<></>
+    :<></>
     )
 }
 
