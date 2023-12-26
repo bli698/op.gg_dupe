@@ -1,0 +1,13 @@
+div.card{
+    width: 380px;
+}
+
+div.col-md-9{
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+div.card-title{
+    margin-top: 8px;
+}

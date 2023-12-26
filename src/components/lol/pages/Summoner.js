@@ -74,6 +74,8 @@ import { useRegionContext, useUpdateRegionContext } from "../../RegionContext";
 import { useLeagueTabContext, useUpdateLeagueTabContext } from "../LeagueTabContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import Card from 'react-bootstrap/Card';
+import "./Summoner.css"
 
 function MiniSearchBar() {
    const selectedRegion = useRegionContext();
@@ -129,13 +131,15 @@ function PlayerRank({playerObj}){
       "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
       "SILVER": "/RankedEmblemsLatest/Rank=Silver.png",
       "GOLD": "/RankedEmblemsLatest/Rank=Gold.png",
-      "PLATINUM": "/images/RankedEmblemsLatest/Rank=Platinum.png",
-      "EMERALD": "/RankedEmblemsLatest/RankEmerald.png",
+      "PLATINUM": "/RankedEmblemsLatest/Rank=Platinum.png",
+      "EMERALD": "/RankedEmblemsLatest/Rank=Emerald.png",
       "DIAMOND": "/RankedEmblemsLatest/Rank=Diamond.png",
       "MASTER": "/RankedEmblemsLatest/Rank=Master.png",
       "GRANDMASTER": "/RankedEmblemsLatest/Rank=Grandmaster.png",
       "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
    }
+
+   const rankedModes = ["Ranked Solo", "Ranked Flex"]
 
    function fixCasing(tierName){
       const allLower = tierName.toLowerCase();
@@ -158,19 +162,28 @@ function PlayerRank({playerObj}){
    rankData ?
       rankData[0]?
          <Container>
-            <Row xs={3} sm={6}>
-               <Col> <img id = "rankImg" src={rankIMGTable[rankData[0]["tier"]]}/></Col>
-               <Col>
+            {
+            [0, 1].map(i =>
+               <Row xs={3} sm={6} style = {{paddingBottom: "10px"}}>
+                  <Card>
+                     <Card.Title>{rankedModes[i]}</Card.Title>
+                     <hr style={{margin: "0px"}}/>
                      <Row>
-                        <Col> {fixCasing(rankData[0]["tier"])} {rankData[0]["rank"]}</Col>
-                        <Col> {rankData[0]["wins"]}W {rankData[0]["losses"]}L</Col>
+                        <Col sm={3} md = {3}> <img id = "rankImg" src={rankIMGTable[rankData[i]["tier"]]}/></Col>
+                        <Col sm={9} md = {9}>
+                              <Row>
+                                 <Col> {fixCasing(rankData[i]["tier"])} {rankData[i]["rank"]}</Col>
+                                 <Col> {rankData[i]["wins"]}W {rankData[i]["losses"]}L</Col>
+                              </Row>
+                              <Row>
+                                 <Col>{rankData[i]["leaguePoints"]} LP</Col>
+                                 <Col>{(rankData[i]["wins"]/(rankData[i]["wins"] + rankData[i]["losses"]) * 100).toFixed(0)} %</Col>
+                              </Row>
+                        </Col>
                      </Row>
-                     <Row>
-                        <Col>{rankData[0]["leaguePoints"]} LP</Col>
-                        <Col>{(rankData[0]["wins"]/(rankData[0]["wins"] + rankData[0]["losses"]) * 100).toFixed(0)} %</Col>
-                     </Row>
-               </Col>
-            </Row>
+                  </Card>
+               </Row>
+            )}
          </Container>
       :<></>
     :<></>
