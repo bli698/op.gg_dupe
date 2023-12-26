@@ -14,7 +14,7 @@ function App() {
           <Route path='' Component={Home} />
           <Route path='/home' Component={Home} />
           <Route path='/champions' Component={Home} />
-          <Route path='/summoners/:name' Component={Summoner} />
+          <Route path='/summoners/:name/:playerTab?' Component={Summoner} />
         </Routes>
       </RegionContextProvider>
     </LeagueTabContextProvider>

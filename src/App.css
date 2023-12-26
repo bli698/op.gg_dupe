@@ -167,6 +167,13 @@ code {
   border-bottom: 1px solid #4171D6;
   padding: 0;
   margin: 0;
+  font-size: 15px;
+  width: 100%;
+
+}
+
+#leagueNav {
+  margin-left: 70px;
 }
 
 #leagueNav > .leagueNavLink {
@@ -194,6 +201,15 @@ code {
   flex-basis: 100px;
   position: relative;
   text-align: center;
+  flex-shrink: 0;
+}
+
+.nameAndStuff {
+  margin-top: 32px;
+  margin-left: 24px;
+  min-width: fit-content;
+  max-width: 946px;
+  width: 100%;
 }
 
 span.level {

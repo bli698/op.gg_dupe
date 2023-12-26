@@ -103,7 +103,7 @@ function MiniSearchBar() {
    )
 }
 
-function PlayerHeader({playerObj}) {
+function PlayerHeader({playerObj, name}) {
    
    return (
       <div className="playerHeader">
@@ -116,66 +116,77 @@ function PlayerHeader({playerObj}) {
                <span className="level">{playerObj.summonerLevel}</span>
             </div>
          </div>
+         <div className='nameAndStuff'>
+            <span>
+               <span style={{fontSize:'24px', color:'#202D37', fontFamily:'Roboto, sans-serif', fontWeight:'bold'}}>{name.split('-')[0]}</span>
+               <span style={{fontSize:'24px', color:'#758592', fontFamily:'Roboto, sans-serif'}}>#{name.split('-')[1].toUpperCase()}</span>
+            </span>
+            <div style={{color:'#9aa4af', fontSize:'12px', fontFamily:'Roboto, sans-serif'}}>Prev. {playerObj.name}</div>
+         </div>
       </div>
    )
 
 }
 
-function PlayerRank({playerObj}){
-   const [rankData, setRankData] = useState();
+function QueuedPlayers() {
 
-   const rankIMGTable = {
-      "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
-      "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
-      "SILVER": "/RankedEmblemsLatest/Rank=Silver.png",
-      "GOLD": "/RankedEmblemsLatest/Rank=Gold.png",
-      "PLATINUM": "/images/RankedEmblemsLatest/Rank=Platinum.png",
-      "EMERALD": "/RankedEmblemsLatest/RankEmerald.png",
-      "DIAMOND": "/RankedEmblemsLatest/Rank=Diamond.png",
-      "MASTER": "/RankedEmblemsLatest/Rank=Master.png",
-      "GRANDMASTER": "/RankedEmblemsLatest/Rank=Grandmaster.png",
-      "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
-   }
-
-   function fixCasing(tierName){
-      const allLower = tierName.toLowerCase();
-      return allLower.charAt(0).toUpperCase() + allLower.slice(1);
-   }
-
-   useEffect(()=>{
-
-      async function getRankInfo(){
-         const data = await RankInfo(playerObj.id);
-         setRankData(data);
-         console.log(data)
-      }
-      getRankInfo();
-   }, 
-   [playerObj])
-
-
-   return(
-   rankData ?
-      rankData[0]?
-         <Container>
-            <Row xs={3} sm={6}>
-               <Col> <img id = "rankImg" src={rankIMGTable[rankData[0]["tier"]]}/></Col>
-               <Col>
-                     <Row>
-                        <Col> {fixCasing(rankData[0]["tier"])} {rankData[0]["rank"]}</Col>
-                        <Col> {rankData[0]["wins"]}W {rankData[0]["losses"]}L</Col>
-                     </Row>
-                     <Row>
-                        <Col>{rankData[0]["leaguePoints"]} LP</Col>
-                        <Col>{(rankData[0]["wins"]/(rankData[0]["wins"] + rankData[0]["losses"]) * 100).toFixed(0)} %</Col>
-                     </Row>
-               </Col>
-            </Row>
-         </Container>
-      :<></>
-    :<></>
-    )
 }
+
+// function PlayerRank({playerObj}){
+//    const [rankData, setRankData] = useState();
+
+//    const rankIMGTable = {
+//       "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
+//       "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
+//       "SILVER": "/RankedEmblemsLatest/Rank=Silver.png",
+//       "GOLD": "/RankedEmblemsLatest/Rank=Gold.png",
+//       "PLATINUM": "/RankedEmblemsLatest/Rank=Platinum.png",
+//       "EMERALD": "/RankedEmblemsLatest/RankEmerald.png",
+//       "DIAMOND": "/RankedEmblemsLatest/Rank=Diamond.png",
+//       "MASTER": "/RankedEmblemsLatest/Rank=Master.png",
+//       "GRANDMASTER": "/RankedEmblemsLatest/Rank=Grandmaster.png",
+//       "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
+//    }
+
+//    function fixCasing(tierName){
+//       const allLower = tierName.toLowerCase();
+//       return allLower.charAt(0).toUpperCase() + allLower.slice(1);
+//    }
+
+//    useEffect(()=>{
+
+//       async function getRankInfo(){
+//          const data = await RankInfo(playerObj.id);
+//          setRankData(data);
+//          console.log(data)
+//       }
+//       getRankInfo();
+//    }, 
+//    [playerObj])
+
+
+//    return(
+//    rankData ?
+//       rankData[0]?
+//          <Container>
+//             <Row xs={3} sm={6}>
+//                <Col> <img id = "rankImg" src={rankIMGTable[rankData[0]["tier"]]}/></Col>
+//                <Col>
+//                      <Row>
+//                         <Col> {fixCasing(rankData[0]["tier"])} {rankData[0]["rank"]}</Col>
+//                         <Col> {rankData[0]["wins"]}W {rankData[0]["losses"]}L</Col>
+//                      </Row>
+//                      <Row>
+//                         <Col>{rankData[0]["leaguePoints"]} LP</Col>
+//                         <Col>{(rankData[0]["wins"]/(rankData[0]["wins"] + rankData[0]["losses"]) * 100).toFixed(0)} %</Col>
+//                      </Row>
+//                </Col>
+//             </Row>
+//          </Container>
+//       :<></>
+//     :<></>
+//     )
+// }
 
 function Summoner() {
    const currTab = useLeagueTabContext();
@@ -184,6 +195,7 @@ function Summoner() {
 
    const [playerObj, setPlayerObj] = useState({});
    const params = useParams();
+   console.log(params);
 
    useEffect(() => {
       async function getSummInfo() {
@@ -204,8 +216,8 @@ function Summoner() {
             <MiniSearchBar />
          </div>
          <LeagueNav />
-         <PlayerHeader playerObj={playerObj} />
-         <PlayerRank playerObj = {playerObj}/>
+         <PlayerHeader playerObj={playerObj} name={params.name || 'summary'}/>
+         {/* <PlayerRank playerObj = {playerObj}/> */}
       </>
    )
 }
