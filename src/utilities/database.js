@@ -29,3 +29,7 @@ export const useData = (path, transform) => {
 
   return [ value, isLoading, error ];
 };
+
+export const setData = (path, value) => (
+  set(ref(database, path), value)
+);
