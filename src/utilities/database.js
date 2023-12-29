@@ -3,6 +3,8 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { useDatabaseValue } from "@react-query-firebase/database";
 import { getDatabase, onValue, ref, set } from 'firebase/database';
+import { useEffect } from "react";
+import { useState } from "react";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,11 +25,21 @@ const firebaseConfig = {
 const firebase = initializeApp(firebaseConfig);
 const database = getDatabase(firebase);
 
-export const useData = (path, transform) => {
-  const { data, isLoading, error } = useDatabaseValue([path], ref(database, path), { subscribe: true });
-  const value = (!isLoading && !error && transform) ? transform(data) : data;
+export const useData = (path) => {
+  const [data, setData] = useState();
+  const [error, setError] = useState(null);
 
-  return [ value, isLoading, error ];
+  useEffect(() => (
+      onValue(ref(database, path), (snapshot) =>{
+          setData(snapshot.val());
+      }
+    , (error) => {
+      setError(error);
+    })
+  ), [ path ]);
+
+  return [ data, error ];
+
 };
 
 export const setData = (path, value) => (
