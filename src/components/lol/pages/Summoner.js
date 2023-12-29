@@ -74,7 +74,7 @@ import { useRegionContext, useUpdateRegionContext } from "../../RegionContext";
 import { useLeagueTabContext, useUpdateLeagueTabContext } from "../LeagueTabContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { useData } from "../../../utilities/database";
+import { useData, setData } from "../../../utilities/database";
 import Card from 'react-bootstrap/Card';
 import "./Summoner.css"
 
@@ -106,7 +106,7 @@ function MiniSearchBar() {
    )
 }
 
-function PlayerHeader({playerObj, name}) {
+function PlayerHeader({playerObj, name, update}) {
    
    return (
       <div className="playerHeader">
@@ -125,6 +125,7 @@ function PlayerHeader({playerObj, name}) {
                <span style={{fontSize:'24px', color:'#758592', fontFamily:'Roboto, sans-serif'}}>#{name.split('-')[1].toUpperCase()}</span>
             </span>
             <div style={{color:'#9aa4af', fontSize:'12px', fontFamily:'Roboto, sans-serif'}}>Prev. {playerObj.name}</div>
+            <div><Button onClick = {update}>Update</Button></div>
          </div>
       </div>
    )
@@ -134,77 +135,56 @@ function PlayerHeader({playerObj, name}) {
 function QueuedPlayers() {
 }
 
-function Test(){
-   const [data, isLoading, error] = useData('/');
-   console.log(data);
-}
+function PlayerRank({playerObj}){
+   const [rankData, isLoading, error ] = useData(`/${playerObj.puuid}/rankInfo`);
 
-// function PlayerRank({playerObj}){
-//    const [rankData, setRankData] = useState();
+   const rankIMGTable = {
+      "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
+      "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
+      "SILVER": "/RankedEmblemsLatest/Rank=Silver.png",
+      "GOLD": "/RankedEmblemsLatest/Rank=Gold.png",
+      "PLATINUM": "/RankedEmblemsLatest/Rank=Platinum.png",
+      "EMERALD": "/RankedEmblemsLatest/Rank=Emerald.png",
+      "DIAMOND": "/RankedEmblemsLatest/Rank=Diamond.png",
+      "MASTER": "/RankedEmblemsLatest/Rank=Master.png",
+      "GRANDMASTER": "/RankedEmblemsLatest/Rank=Grandmaster.png",
+      "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
+   }
 
-//    const rankIMGTable = {
-//       "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
-//       "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
-//       "SILVER": "/RankedEmblemsLatest/Rank=Silver.png",
-//       "GOLD": "/RankedEmblemsLatest/Rank=Gold.png",
-//       "PLATINUM": "/RankedEmblemsLatest/Rank=Platinum.png",
-//       "EMERALD": "/RankedEmblemsLatest/Rank=Emerald.png",
-//       "DIAMOND": "/RankedEmblemsLatest/Rank=Diamond.png",
-//       "MASTER": "/RankedEmblemsLatest/Rank=Master.png",
-//       "GRANDMASTER": "/RankedEmblemsLatest/Rank=Grandmaster.png",
-//       "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
-//    }
+   function fixCasing(tierName){
+      const allLower = tierName.toLowerCase();
+      return allLower.charAt(0).toUpperCase() + allLower.slice(1);
+   }
 
-//    const rankedModes = ["Ranked Solo", "Ranked Flex"]
-
-//    function fixCasing(tierName){
-//       const allLower = tierName.toLowerCase();
-//       return allLower.charAt(0).toUpperCase() + allLower.slice(1);
-//    }
-
-//    useEffect(()=>{
-
-//          async function getRankInfo(){
-//             const data = await RankInfo(playerObj.id);
-//             setRankData(data);
-//             console.log(data)
-//          }
-//          getRankInfo();
-//       }, 
-//    [playerObj])
-
-
-//    return(
-//       rankData ?
-//          rankData[0]?
-//             <Container>
-//                {
-//                [0, 1].map(i =>
-//                   <Row xs={3} sm={6} style = {{paddingBottom: "10px"}}>
-//                      <Card>
-//                         <Card.Title>{rankedModes[i]}</Card.Title>
-//                         <hr style={{margin: "0px"}}/>
-//                         <Row>
-//                            <Col sm={3} md = {3}> <img id = "rankImg" src={rankIMGTable[rankData[i]["tier"]]}/></Col>
-//                            <Col sm={9} md = {9}>
-//                                  <Row>
-//                                     <Col> {fixCasing(rankData[i]["tier"])} {rankData[i]["rank"]}</Col>
-//                                     <Col> {rankData[i]["wins"]}W {rankData[i]["losses"]}L</Col>
-//                                  </Row>
-//                                  <Row>
-//                                     <Col>{rankData[i]["leaguePoints"]} LP</Col>
-//                                     <Col>{(rankData[i]["wins"]/(rankData[i]["wins"] + rankData[i]["losses"]) * 100).toFixed(0)} %</Col>
-//                                  </Row>
-//                            </Col>
-//                         </Row>
-//                      </Card>
-//                   </Row>
-//                )}
-//             </Container>
-//          :<></>
-//       :<></>
-//       )
-//    }
+   return(
+      rankData ?
+            <Container>
+               {
+               ["solo", "flex"].map(mode =>
+                  <Row xs={3} sm={6} style = {{paddingBottom: "10px"}}>
+                     <Card>
+                        <Card.Title>{mode}</Card.Title>
+                        <hr style={{margin: "0px"}}/>
+                        <Row>
+                           <Col sm={3} md = {3}> <img id = "rankImg" src={rankIMGTable[rankData[mode]["tier"]]}/></Col>
+                           <Col sm={9} md = {9}>
+                                 <Row>
+                                    <Col> {fixCasing(rankData[mode]["tier"])} {rankData[mode]["rank"]}</Col>
+                                    <Col> {rankData[mode]["wins"]}W {rankData[mode]["losses"]}L</Col>
+                                 </Row>
+                                 <Row>
+                                    <Col>{rankData[mode]["leaguePoints"]} LP</Col>
+                                    <Col>{(rankData[mode]["wins"]/(rankData[mode]["wins"] + rankData[mode]["losses"]) * 100).toFixed(0)} %</Col>
+                                 </Row>
+                           </Col>
+                        </Row>
+                     </Card>
+                  </Row>
+               )}
+            </Container>
+         :<></>
+      )
+   }
 
 // function PlayerMatchSummary({playerObj}){
 //    const [matchIDs, setMatchIds] = useState([]);
@@ -261,7 +241,6 @@ function Test(){
 // }
 
 function Summoner() {
-   const currTab = useLeagueTabContext();
    const updateCurrTab = useUpdateLeagueTabContext();
    updateCurrTab(null);
 
@@ -269,6 +248,7 @@ function Summoner() {
    const params = useParams();
    console.log(params);
 
+   // get user info: ids etc
    useEffect(() => {
       async function getSummInfo() {
          const res = await SummonerInfo(params.name);
@@ -280,7 +260,45 @@ function Summoner() {
       getSummInfo();
    }, []);
 
+
+   const update = async() =>{
+
+      //START UPDATING RANK INFO ****************
+      const data = await RankInfo(playerObj.id);
+
+      console.log(data);
+      let solo = data[1];      
+      let flex = data[0];
+
+      const rankInfo = {
+         "solo": {
+            "wins": solo.wins,
+            "losses": solo.losses,
+            "games": solo.wins + solo.losses,
+            "tier": solo.tier,
+            "rank": solo.rank,
+            "LP": solo.leaguePoints
+         },
+         "flex":{
+            "wins": flex.wins,
+            "losses": flex.losses,
+            "games": flex.wins + flex.losses,
+            "tier": flex.tier,
+            "rank": flex.rank,
+            "LP": flex.leaguePoints
+         }
+      }
+
+      // set solo q info
+      setData(`${playerObj.puuid}/rankInfo`,rankInfo);
+
+      // END UPDATING RANK INFO ****************
+   }
+
+
    return (
+
+
       <>
          <GameNav />
          <div className="searchRow">
@@ -288,10 +306,10 @@ function Summoner() {
             <MiniSearchBar />
          </div>
          <LeagueNav />
-         <PlayerHeader playerObj={playerObj} name={params.name || 'summary'}/>
-         {/* <PlayerRank playerObj = {playerObj}/> */}
+         <PlayerHeader playerObj={playerObj} name={params.name || 'summary'} update = {update}/>
+         <PlayerRank playerObj = {playerObj}/>
          {/* <PlayerMatchSummary playerObj={playerObj}></PlayerMatchSummary> */}
-         <Test></Test>
+         
       </>
    )
 }
