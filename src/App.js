@@ -6,18 +6,25 @@ import { RegionContextProvider } from './components/RegionContext';
 import {Route, Routes} from 'react-router-dom';
 import Home from './components/lol/pages/Home';
 import Summoner from './components/lol/pages/Summoner';
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+
+
 function App() {
+  
+  const queryClient = new QueryClient();
   return (
-    <LeagueTabContextProvider>
-      <RegionContextProvider>
-        <Routes>
-          <Route path='' Component={Home} />
-          <Route path='/home' Component={Home} />
-          <Route path='/champions' Component={Home} />
-          <Route path='/summoners/:name/:playerTab?' Component={Summoner} />
-        </Routes>
-      </RegionContextProvider>
-    </LeagueTabContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <LeagueTabContextProvider>
+        <RegionContextProvider>
+          <Routes>
+            <Route path='' Component={Home} />
+            <Route path='/home' Component={Home} />
+            <Route path='/champions' Component={Home} />
+            <Route path='/summoners/:name/:playerTab?' Component={Summoner} />
+          </Routes>
+        </RegionContextProvider>
+      </LeagueTabContextProvider>
+    </QueryClientProvider>
   );
 }
 
