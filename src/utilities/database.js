@@ -1,6 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { useDatabaseValue } from "@react-query-firebase/database";
+import { getDatabase, onValue, ref, set } from 'firebase/database';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,5 +20,12 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig); // app is the app itself
-const analytics = getAnalytics(app);
+const firebase = initializeApp(firebaseConfig);
+const database = getDatabase(firebase);
+
+export const useData = (path, transform) => {
+  const { data, isLoading, error } = useDatabaseValue([path], ref(database, path), { subscribe: true });
+  const value = (!isLoading && !error && transform) ? transform(data) : data;
+
+  return [ value, isLoading, error ];
+};

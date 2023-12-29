@@ -74,6 +74,7 @@ import { useRegionContext, useUpdateRegionContext } from "../../RegionContext";
 import { useLeagueTabContext, useUpdateLeagueTabContext } from "../LeagueTabContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useData } from "../../../utilities/database";
 import Card from 'react-bootstrap/Card';
 import "./Summoner.css"
 
@@ -131,6 +132,11 @@ function PlayerHeader({playerObj, name}) {
 }
 
 function QueuedPlayers() {
+}
+
+function Test(){
+   const [data, isLoading, error] = useData('/');
+   console.log(data);
 }
 
 // function PlayerRank({playerObj}){
@@ -285,6 +291,7 @@ function Summoner() {
          <PlayerHeader playerObj={playerObj} name={params.name || 'summary'}/>
          {/* <PlayerRank playerObj = {playerObj}/> */}
          {/* <PlayerMatchSummary playerObj={playerObj}></PlayerMatchSummary> */}
+         <Test></Test>
       </>
    )
 }
