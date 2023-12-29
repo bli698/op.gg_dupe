@@ -69,7 +69,7 @@ import Copyright from '../../Copyright';
 import GameNav from "../../GameNav";
 import LeagueNav from "../LeagueNav";
 import logoLight from "../../../images/logoLight.png";
-import { SummonerInfo, RankInfo } from "../ProxyCalls";
+import { SummonerInfo, RankInfo, Matches } from "../ProxyCalls";
 import { useRegionContext, useUpdateRegionContext } from "../../RegionContext";
 import { useLeagueTabContext, useUpdateLeagueTabContext } from "../LeagueTabContext";
 import { useState, useEffect } from "react";
@@ -200,6 +200,22 @@ function PlayerRank({playerObj}){
       )
    }
 
+function PlayerMatchSummary({playerObj}){
+   const [matches, setMatches] = useState({});
+
+   useEffect(()=>{
+      async function getMatches(){
+         const all_matches = await Matches(playerObj.puuid);
+         setMatches(all_matches);
+
+         console.log(matches)
+      }
+      getMatches();
+   }, [playerObj])
+
+   return (<>NOTTHING</>)
+
+}
 
 function Summoner() {
    const currTab = useLeagueTabContext();
@@ -231,6 +247,7 @@ function Summoner() {
          <LeagueNav />
          <PlayerHeader playerObj={playerObj} name={params.name || 'summary'}/>
          <PlayerRank playerObj = {playerObj}/>
+         <PlayerMatchSummary playerObj={playerObj}></PlayerMatchSummary>
       </>
    )
 }

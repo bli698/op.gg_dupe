@@ -23,3 +23,12 @@ export function RankInfo(encryptedID) {
     
     return promise;
 }
+
+export function Matches(puuid){
+    const promise = axios.get(`http://localhost:5000/getMatchHistory/${puuid}`)
+    .then(response => 
+        response.data
+    );
+
+    return promise;
+}
