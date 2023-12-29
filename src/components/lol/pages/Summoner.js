@@ -133,7 +133,9 @@ function PlayerHeader({playerObj, name}) {
 function QueuedPlayers() {
 }
 
-function PlayerRank(){
+function PlayerRank({playerObj}){
+   const [rankData, setRankData] = useState();
+
    const rankIMGTable = {
       "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
       "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
