@@ -69,7 +69,7 @@ import Copyright from '../../Copyright';
 import GameNav from "../../GameNav";
 import LeagueNav from "../LeagueNav";
 import logoLight from "../../../images/logoLight.png";
-import { SummonerInfo, RankInfo } from "../ProxyCalls";
+import { SummonerInfo, RankInfo, MatchIDs, Matches } from "../ProxyCalls";
 import { useRegionContext, useUpdateRegionContext } from "../../RegionContext";
 import { useLeagueTabContext, useUpdateLeagueTabContext } from "../LeagueTabContext";
 import { useState, useEffect } from "react";
@@ -133,73 +133,126 @@ function PlayerHeader({playerObj, name}) {
 function QueuedPlayers() {
 }
 
-function PlayerRank({playerObj}){
-   const [rankData, setRankData] = useState();
+// function PlayerRank({playerObj}){
+//    const [rankData, setRankData] = useState();
 
-   const rankIMGTable = {
-      "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
-      "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
-      "SILVER": "/RankedEmblemsLatest/Rank=Silver.png",
-      "GOLD": "/RankedEmblemsLatest/Rank=Gold.png",
-      "PLATINUM": "/RankedEmblemsLatest/Rank=Platinum.png",
-      "EMERALD": "/RankedEmblemsLatest/Rank=Emerald.png",
-      "DIAMOND": "/RankedEmblemsLatest/Rank=Diamond.png",
-      "MASTER": "/RankedEmblemsLatest/Rank=Master.png",
-      "GRANDMASTER": "/RankedEmblemsLatest/Rank=Grandmaster.png",
-      "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
-   }
+//    const rankIMGTable = {
+//       "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
+//       "BRONZE": "/RankedEmblemsLatest/Rank=Bronze.png",
+//       "SILVER": "/RankedEmblemsLatest/Rank=Silver.png",
+//       "GOLD": "/RankedEmblemsLatest/Rank=Gold.png",
+//       "PLATINUM": "/RankedEmblemsLatest/Rank=Platinum.png",
+//       "EMERALD": "/RankedEmblemsLatest/Rank=Emerald.png",
+//       "DIAMOND": "/RankedEmblemsLatest/Rank=Diamond.png",
+//       "MASTER": "/RankedEmblemsLatest/Rank=Master.png",
+//       "GRANDMASTER": "/RankedEmblemsLatest/Rank=Grandmaster.png",
+//       "CHALLENGER": "/RankedEmblemsLatest/Rank=Challenger.png"
+//    }
 
-   const rankedModes = ["Ranked Solo", "Ranked Flex"]
+//    const rankedModes = ["Ranked Solo", "Ranked Flex"]
 
-   function fixCasing(tierName){
-      const allLower = tierName.toLowerCase();
-      return allLower.charAt(0).toUpperCase() + allLower.slice(1);
-   }
+//    function fixCasing(tierName){
+//       const allLower = tierName.toLowerCase();
+//       return allLower.charAt(0).toUpperCase() + allLower.slice(1);
+//    }
 
-   useEffect(()=>{
+//    useEffect(()=>{
 
-         async function getRankInfo(){
-            const data = await RankInfo(playerObj.id);
-            setRankData(data);
-            console.log(data)
-         }
-         getRankInfo();
-      }, 
-   [playerObj])
+//          async function getRankInfo(){
+//             const data = await RankInfo(playerObj.id);
+//             setRankData(data);
+//             console.log(data)
+//          }
+//          getRankInfo();
+//       }, 
+//    [playerObj])
 
 
-   return(
-      rankData ?
-         rankData[0]?
-            <Container>
-               {
-               [0, 1].map(i =>
-                  <Row xs={3} sm={6} style = {{paddingBottom: "10px"}}>
-                     <Card>
-                        <Card.Title>{rankedModes[i]}</Card.Title>
-                        <hr style={{margin: "0px"}}/>
-                        <Row>
-                           <Col sm={3} md = {3}> <img id = "rankImg" src={rankIMGTable[rankData[i]["tier"]]}/></Col>
-                           <Col sm={9} md = {9}>
-                                 <Row>
-                                    <Col> {fixCasing(rankData[i]["tier"])} {rankData[i]["rank"]}</Col>
-                                    <Col> {rankData[i]["wins"]}W {rankData[i]["losses"]}L</Col>
-                                 </Row>
-                                 <Row>
-                                    <Col>{rankData[i]["leaguePoints"]} LP</Col>
-                                    <Col>{(rankData[i]["wins"]/(rankData[i]["wins"] + rankData[i]["losses"]) * 100).toFixed(0)} %</Col>
-                                 </Row>
-                           </Col>
-                        </Row>
-                     </Card>
-                  </Row>
-               )}
-            </Container>
-         :<></>
-      :<></>
-      )
-   }
+//    return(
+//       rankData ?
+//          rankData[0]?
+//             <Container>
+//                {
+//                [0, 1].map(i =>
+//                   <Row xs={3} sm={6} style = {{paddingBottom: "10px"}}>
+//                      <Card>
+//                         <Card.Title>{rankedModes[i]}</Card.Title>
+//                         <hr style={{margin: "0px"}}/>
+//                         <Row>
+//                            <Col sm={3} md = {3}> <img id = "rankImg" src={rankIMGTable[rankData[i]["tier"]]}/></Col>
+//                            <Col sm={9} md = {9}>
+//                                  <Row>
+//                                     <Col> {fixCasing(rankData[i]["tier"])} {rankData[i]["rank"]}</Col>
+//                                     <Col> {rankData[i]["wins"]}W {rankData[i]["losses"]}L</Col>
+//                                  </Row>
+//                                  <Row>
+//                                     <Col>{rankData[i]["leaguePoints"]} LP</Col>
+//                                     <Col>{(rankData[i]["wins"]/(rankData[i]["wins"] + rankData[i]["losses"]) * 100).toFixed(0)} %</Col>
+//                                  </Row>
+//                            </Col>
+//                         </Row>
+//                      </Card>
+//                   </Row>
+//                )}
+//             </Container>
+//          :<></>
+//       :<></>
+//       )
+//    }
 
+// function PlayerMatchSummary({playerObj}){
+//    const [matchIDs, setMatchIds] = useState([]);
+//    const [summerChampionData, setSummonerChampionData] = useState([]);
+
+//    //fetch match ids
+//    useEffect(()=>{
+//       async function getMatchIDs(){
+//          const all_matches = await MatchIDs(playerObj.puuid);
+//          setMatchIds(all_matches);
+
+//          console.log(matchIDs);
+//       }
+//       getMatchIDs();
+//    }, [playerObj])
+
+//    //fetch all matches returned by the match ids
+//    useEffect(()=>{
+//       async function getMatches(){
+//             if(Array.isArray(matchIDs) && matchIDs.length !== 0){
+//                   const matches = await Promise.all(matchIDs.map(async(matchID) =>
+//                         await Matches(matchID)
+//                      )
+//                   );
+//                   const playerIndices =  matches.map(match => match.metadata.participants.findIndex((participant) => participant === playerObj.puuid));
+
+//                   const teamIndices = playerIndices.map(playerIndex => playerIndex <= 4? 0 : 1);
+
+//                   // champion names with win/loss, possibly with dups
+//                   let allChampionAndWins =  matches.map((match,idx) => [match.info.participants[playerIndices[idx]].championName, 
+//                                                                         match.info.teams[teamIndices[idx]].win === true? 1 : 0 ])
+
+//                   console.log(allChampionAndWins)
+
+//                   // // remove duplicates
+//                   let allUniqueChampionNames = allChampionAndWins.map(champWin => champWin[0]).filter((championName, idx) => allChampionAndWins.findIndex((champName) => championName === champName) === idx);
+
+//                   console.log(allUniqueChampionNames)
+
+//                   const uniqueChampCounts = allUniqueChampionNames.map(champ => [champ, 
+//                                                                                     allChampionAndWins.filter(champWins => champWins[0] === champ && champWins[1]=== 1).length,
+//                                                                                     allChampionAndWins.filter(champWins => champWins[0] === champ).length
+//                                                                                  ])
+
+//                   console.log(uniqueChampCounts)
+//             }
+//       }
+//       getMatches();
+//    }, [matchIDs])
+
+
+//    return (<>NOTTHING</>)
+
+// }
 
 function Summoner() {
    const currTab = useLeagueTabContext();
@@ -230,7 +283,8 @@ function Summoner() {
          </div>
          <LeagueNav />
          <PlayerHeader playerObj={playerObj} name={params.name || 'summary'}/>
-         <PlayerRank playerObj = {playerObj}/>
+         {/* <PlayerRank playerObj = {playerObj}/> */}
+         {/* <PlayerMatchSummary playerObj={playerObj}></PlayerMatchSummary> */}
       </>
    )
 }
