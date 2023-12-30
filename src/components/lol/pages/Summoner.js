@@ -136,7 +136,7 @@ function QueuedPlayers() {
 }
 
 function PlayerRank({playerObj}){
-   const [rankData, isLoading, error ] = useData(`/${playerObj.puuid}/rankInfo`);
+   const [rankData, error ] = useData(`/${playerObj.puuid}/rankInfo`);
 
    const rankIMGTable = {
       "IRON": "/RankedEmblemsLatest/Rank=Iron.png",
@@ -186,59 +186,58 @@ function PlayerRank({playerObj}){
       )
    }
 
-// function PlayerMatchSummary({playerObj}){
-//    const [matchIDs, setMatchIds] = useState([]);
-//    const [summerChampionData, setSummonerChampionData] = useState([]);
+function PlayerMatchSummary({playerObj}){
 
-//    //fetch match ids
-//    useEffect(()=>{
-//       async function getMatchIDs(){
-//          const all_matches = await MatchIDs(playerObj.puuid);
-//          setMatchIds(all_matches);
+   const [matches, error] = useData(`/${playerObj.puuid}/matches`)
 
-//          console.log(matchIDs);
-//       }
-//       getMatchIDs();
-//    }, [playerObj])
+   console.log(matches);
 
-//    //fetch all matches returned by the match ids
-//    useEffect(()=>{
-//       async function getMatches(){
-//             if(Array.isArray(matchIDs) && matchIDs.length !== 0){
-//                   const matches = await Promise.all(matchIDs.map(async(matchID) =>
-//                         await Matches(matchID)
-//                      )
-//                   );
-//                   const playerIndices =  matches.map(match => match.metadata.participants.findIndex((participant) => participant === playerObj.puuid));
+   if(matches){
+      const playerIndices =  matches.map(match => { 
+            if (!match.status){
+               return match.metadata.participants.findIndex((participant) => participant === playerObj.puuid);
+            } 
+      });
 
-//                   const teamIndices = playerIndices.map(playerIndex => playerIndex <= 4? 0 : 1);
+      console.log(playerIndices)
 
-//                   // champion names with win/loss, possibly with dups
-//                   let allChampionAndWins =  matches.map((match,idx) => [match.info.participants[playerIndices[idx]].championName, 
-//                                                                         match.info.teams[teamIndices[idx]].win === true? 1 : 0 ])
+      const teamIndices = playerIndices.map(playerIndex => playerIndex <= 4? 0 : 1);
 
-//                   console.log(allChampionAndWins)
+      console.log(teamIndices)
 
-//                   // // remove duplicates
-//                   let allUniqueChampionNames = allChampionAndWins.map(champWin => champWin[0]).filter((championName, idx) => allChampionAndWins.findIndex((champName) => championName === champName) === idx);
+      // champion names with win/loss, possibly with dups
+      let allChampionAndWins =  matches.map((match,idx) => [match.info.participants[playerIndices[idx]].championName, 
+                                                            match.info.teams[teamIndices[idx]].win === true? 1 : 0 ])
 
-//                   console.log(allUniqueChampionNames)
+      console.log(allChampionAndWins)
 
-//                   const uniqueChampCounts = allUniqueChampionNames.map(champ => [champ, 
-//                                                                                     allChampionAndWins.filter(champWins => champWins[0] === champ && champWins[1]=== 1).length,
-//                                                                                     allChampionAndWins.filter(champWins => champWins[0] === champ).length
-//                                                                                  ])
+      // remove duplicates
+      let allChamps = allChampionAndWins.map(champWin => champWin[0]);
+      let allUniqueChampionNames = allChamps.filter((championName, idx) => allChamps.findIndex((champName) => championName === champName) === idx);
 
-//                   console.log(uniqueChampCounts)
-//             }
-//       }
-//       getMatches();
-//    }, [matchIDs])
+      console.log(allUniqueChampionNames)
 
+      //all unique champs with name, wins, games
+      const uniqueChampCounts = allUniqueChampionNames.map(champ => [champ, 
+                                                                        allChampionAndWins.filter(champWins => champWins[0] === champ && champWins[1]=== 1).length,
+                                                                        allChampionAndWins.filter(champWins => champWins[0] === champ).length
+                                                                     ])
+      return(
+         <Container>
+            {uniqueChampCounts.sort((a,b) => b[2] - a[2]).map(champStats =>
+               <Row>
+                  <Col>{champStats[0]}</Col>
+                  <Col>
+                     <Row>{(champStats[1]/champStats[2] * 100).toFixed(0)}%</Row>
+                     <Row>{champStats[2]} played</Row>
+                  </Col>
+               </Row>
+            )}
+         </Container>
+      )
+   }
 
-//    return (<>NOTTHING</>)
-
-// }
+}
 
 function Summoner() {
    const updateCurrTab = useUpdateLeagueTabContext();
@@ -293,6 +292,21 @@ function Summoner() {
       setData(`${playerObj.puuid}/rankInfo`,rankInfo);
 
       // END UPDATING RANK INFO ****************
+
+
+      // START UPDATING MATCH HISTORY *************************
+      const matchIDs = await MatchIDs(playerObj.puuid);
+      console.log(matchIDs)
+
+      const matches = await Promise.all(matchIDs.map(async(matchID) =>
+                           await Matches(matchID)
+                     )
+                  );
+
+      setData(`${playerObj.puuid}/matches`, matches);
+
+      // END UPDATING MATCH HISTORY ***************************
+
    }
 
 
@@ -308,7 +322,7 @@ function Summoner() {
          <LeagueNav />
          <PlayerHeader playerObj={playerObj} name={params.name || 'summary'} update = {update}/>
          <PlayerRank playerObj = {playerObj}/>
-         {/* <PlayerMatchSummary playerObj={playerObj}></PlayerMatchSummary> */}
+         <PlayerMatchSummary playerObj={playerObj}></PlayerMatchSummary>
          
       </>
    )
