@@ -298,11 +298,15 @@ function Summoner() {
       const matchIDs = await MatchIDs(playerObj.puuid);
       console.log(matchIDs)
 
-      const matches = await Promise.all(matchIDs.map(async(matchID) =>
-                           await Matches(matchID)
-                     )
-                  );
+      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+      const matches = [];
+      for (const matchID of matchIDs) {
+          await delay(50); // introduce a 60 ms delay
+          const result = await Matches(matchID);
+          matches.push(result);
+      }
+      
       setData(`${playerObj.puuid}/matches`, matches);
 
       // END UPDATING MATCH HISTORY ***************************
