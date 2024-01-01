@@ -6,7 +6,7 @@ import { RegionContextProvider } from './components/RegionContext';
 import {Route, Routes} from 'react-router-dom';
 import Home from './components/lol/pages/Home';
 import Summoner from './components/lol/pages/Summoner';
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 
 function App() {

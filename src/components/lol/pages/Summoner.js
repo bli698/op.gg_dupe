@@ -206,27 +206,54 @@ function PlayerMatchSummary({playerObj}){
       console.log(teamIndices)
 
       // champion names with win/loss, possibly with dups
-      let allChampionAndWins =  matches.map((match,idx) => [match.info.participants[playerIndices[idx]].championName, 
-                                                            match.info.teams[teamIndices[idx]].win === true? 1 : 0 ])
+      let allChampionStats =  matches.map((match,idx) =>{      
+         const playerRef = match.info.participants[playerIndices[idx]]; 
+         return( [playerRef.championName, 
+                  match.info.teams[teamIndices[idx]].win === true? 1 : 0,
+                  playerRef.kills,
+                  playerRef.deaths,
+                  playerRef.assists]);
+      })
 
-      console.log(allChampionAndWins)
+      console.log(allChampionStats)
 
       // remove duplicates
-      let allChamps = allChampionAndWins.map(champWin => champWin[0]);
+      let allChamps = allChampionStats.map(champWin => champWin[0]);
       let allUniqueChampionNames = allChamps.filter((championName, idx) => allChamps.findIndex((champName) => championName === champName) === idx);
 
       console.log(allUniqueChampionNames)
 
-      //all unique champs with name, wins, games
-      const uniqueChampCounts = allUniqueChampionNames.map(champ => [champ, 
-                                                                        allChampionAndWins.filter(champWins => champWins[0] === champ && champWins[1]=== 1).length,
-                                                                        allChampionAndWins.filter(champWins => champWins[0] === champ).length
-                                                                     ])
+      //all unique champs with name, wins, games, kda, avg kills, avg deaths, avg assists
+      const uniqueChampStats = allUniqueChampionNames.map(champ => {
+
+            // Champstats: name, wins, k, d, a
+            const filterByChampName = allChampionStats.filter(champStats => champStats[0] === champ);
+            const filterByChampNameNWin = allChampionStats.filter(champStats => champStats[0] === champ && champStats[1]=== 1);
+            console.log(filterByChampName.reduce((cum, cur) => cum + cur[2] , 0))
+            const sumKills = filterByChampName.reduce((cum, cur) => cum + cur[2] , 0);
+            const sumDeaths = filterByChampName.reduce((cum, cur) => cum + cur[3] , 0);
+            const sumAssists = filterByChampName.reduce((cum, cur) => cum + cur[4] , 0);
+
+            return([champ, 
+               filterByChampNameNWin.length,
+               filterByChampName.length,
+               sumAssists !== 0 ? (sumKills + sumAssists)/sumDeaths : sumKills + sumAssists,
+               sumKills/filterByChampName.length,
+               sumDeaths/filterByChampName.length,
+               sumAssists/filterByChampName.length,
+            ])
+         }
+      )
+      console.log(uniqueChampStats)
       return(
          <Container>
-            {uniqueChampCounts.sort((a,b) => b[2] - a[2]).map(champStats =>
+            {uniqueChampStats.sort((a,b) => b[2] - a[2]).map(champStats =>
                <Row>
                   <Col>{champStats[0]}</Col>
+                  <Col>
+                     <Row>{champStats[3].toFixed(2)}:1 KDA</Row>
+                     <Row>{champStats[4].toFixed(1)}/{champStats[6].toFixed(1)}/{champStats[5].toFixed(1)}</Row>
+                  </Col>
                   <Col>
                      <Row>{(champStats[1]/champStats[2] * 100).toFixed(0)}%</Row>
                      <Row>{champStats[2]} played</Row>
