@@ -273,7 +273,7 @@ function PlayerMatchSummary({playerObj}){
             return([champ, 
                filterByChampNameNWin.length,
                filterByChampName.length,
-               avgDeaths !== 0 ? (avgKills + avgAssists) / avgDeaths: avgKills + avgDeaths ,
+               avgDeaths !== 0 ? (avgKills + avgAssists) / avgDeaths: avgKills + avgAssists ,
                avgKills,
                avgDeaths,
                avgAssists,
