@@ -176,7 +176,7 @@ function PlayerRank({playerObj}){
                                     <Col> {rankData[mode]["wins"]}W {rankData[mode]["losses"]}L</Col>
                                  </Row>
                                  <Row>
-                                    <Col>{rankData[mode]["leaguePoints"]} LP</Col>
+                                    <Col>{rankData[mode]["LP"]} LP</Col>
                                     <Col>{(rankData[mode]["wins"]/(rankData[mode]["wins"] + rankData[mode]["losses"]) * 100).toFixed(0)} %</Col>
                                  </Row>
                            </Col>
@@ -192,10 +192,11 @@ function PlayerRank({playerObj}){
 function PlayerMatchSummary({playerObj}){
 
    //queueid table
+   const seasonS2 = "Season S2";
    const Solo = 420;
    const Flex = 440;
 
-   const [queueId, setQueueId] = useState(Solo);
+   const [queueId, setQueueId] = useState(seasonS2);
 
    const [matches, error] = useData(`/${playerObj.puuid}/matches`);
 
