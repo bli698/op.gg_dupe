@@ -63,6 +63,8 @@ import Form  from "react-bootstrap/Form";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';   
 import ggBtn from '../../../images/searchbutton-gg.svg';
@@ -189,12 +191,23 @@ function PlayerRank({playerObj}){
 
 function PlayerMatchSummary({playerObj}){
 
-   const [matches, error] = useData(`/${playerObj.puuid}/matches`)
+   //queueid table
+   const Solo = 420;
+   const Flex = 440;
+
+   const [queueId, setQueueId] = useState(Solo);
+
+   const [matches, error] = useData(`/${playerObj.puuid}/matches`);
 
    console.log(matches);
 
    if(matches){
-      const playerIndices =  matches.map(match => { 
+
+      // filter by Q type
+      const qFilteredMatches = queueId === 420 || queueId === 420? matches.filter(match => match.info.queueId === queueId): matches;
+
+
+      const playerIndices =  qFilteredMatches.map(match => { 
             if (!match.status){
                return match.metadata.participants.findIndex((participant) => participant === playerObj.puuid);
             } 
@@ -207,7 +220,7 @@ function PlayerMatchSummary({playerObj}){
       console.log(teamIndices)
 
       // champion names with win/loss, possibly with dups
-      let allChampionStats =  matches.map((match,idx) =>{      
+      let allChampionStats =  qFilteredMatches.map((match,idx) =>{      
          const playerRef = match.info.participants[playerIndices[idx]]; 
          return( [
                   playerRef.championId,
@@ -237,7 +250,7 @@ function PlayerMatchSummary({playerObj}){
       let allUniqueChampionNames = allChamps.filter((championName, idx) => allChamps.findIndex((champName) => championName === champName) === idx);
 
 
-      //all unique champs with name, wins, games, kda, avg kills, avg deaths, avg assists, avg cs, time played
+      //all unique champs with name, wins, games, kda, avg kills, avg deaths, avg assists, avg cs, cs per min
       const uniqueChampStats = allUniqueChampionNames.map(champ => {
             
 
@@ -250,22 +263,47 @@ function PlayerMatchSummary({playerObj}){
             const sumCS = filterByChampName.reduce((cum, cur) => cum + cur[cs], 0);
             const sumTime = filterByChampName.reduce((cum, cur) => cum + cur[timePlayed], 0);
 
+            const avgKills = sumKills/filterByChampName.length;
+            const avgDeaths = sumDeaths/filterByChampName.length;
+            const avgAssists = sumAssists/filterByChampName.length;
+            const avgCS =  sumCS/filterByChampName.length;
+            const csPerMin = sumCS/sumTime*60;
+
             return([champ, 
                filterByChampNameNWin.length,
                filterByChampName.length,
-               sumAssists !== 0 ? (sumKills + sumAssists)/sumDeaths : sumKills + sumAssists,
-               sumKills/filterByChampName.length,
-               sumDeaths/filterByChampName.length,
-               sumAssists/filterByChampName.length,
-               sumCS/filterByChampName.length,
-               sumCS/sumTime*60
+               avgDeaths !== 0 ? (avgKills + avgAssists) / avgDeaths: avgKills + avgDeaths ,
+               avgKills,
+               avgDeaths,
+               avgAssists,
+               avgCS,
+               csPerMin
             ])
          }
       )
       console.log(uniqueChampStats)
 
+      const tabClickHandler = (k) =>{
+         console.log(k);
+         setQueueId(parseInt(k));
+      }
+
       return(
          <Table striped style = {{width:"375px", fontSize: "12px"}}>
+               <Tabs
+                  defaultActiveKey="profile"
+                  id="fill-tab-example"
+                  activeKey={queueId}
+                  onSelect={(k) => tabClickHandler(k)}
+                  fill
+               >
+                  <Tab eventKey= "Season S2" title="Season S2" >
+                  </Tab>
+                  <Tab eventKey="420" title="Ranked Solo">
+                  </Tab>
+                  <Tab eventKey="440" title="Ranked Flex">
+                  </Tab>
+            </Tabs>
             <tbody>
                {uniqueChampStats.sort((a,b) => b[2] - a[2]).map(champStats =>
                   <tr>
@@ -284,14 +322,14 @@ function PlayerMatchSummary({playerObj}){
                         <Col xs = {3} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                            <Row style = {{color: champStats[3] < 3? "gray": 
                                           champStats[3] < 4? "#00BBA3":
-                                          champStats[3] < 5? "b#0093FF":
+                                          champStats[3] < 5? "#0093FF":
                                           champStats[3] < 6? "#F06F00":
                                           "#E84057",
                                           }}>
                                  <b>{champStats[3].toFixed(2)}:1 KDA </b>
                            </Row>
                            <Row>
-                              {champStats[4].toFixed(1)} / {champStats[6].toFixed(1)} / {champStats[5].toFixed(1)}
+                              {champStats[4].toFixed(1)} / {champStats[5].toFixed(1)} / {champStats[6].toFixed(1)}
                            </Row>
                         </Col>
                         <Col xs = {4} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
