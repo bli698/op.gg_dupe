@@ -64,6 +64,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';   
 import ggBtn from '../../../images/searchbutton-gg.svg';
 import Copyright from '../../Copyright';
 import GameNav from "../../GameNav";
@@ -163,7 +164,7 @@ function PlayerRank({playerObj}){
                ["solo", "flex"].map(mode =>
                   <Row xs={3} sm={6} style = {{paddingBottom: "10px"}}>
                      <Card>
-                        <Card.Title>{mode}</Card.Title>
+                        <Card.Title>{fixCasing(mode)}</Card.Title>
                         <hr style={{margin: "0px"}}/>
                         <Row>
                            <Col sm={3} md = {3}> <img id = "rankImg" src={rankIMGTable[rankData[mode]["tier"]]}/></Col>
@@ -208,31 +209,46 @@ function PlayerMatchSummary({playerObj}){
       // champion names with win/loss, possibly with dups
       let allChampionStats =  matches.map((match,idx) =>{      
          const playerRef = match.info.participants[playerIndices[idx]]; 
-         return( [playerRef.championName, 
+         return( [
+                  playerRef.championId,
+                  playerRef.championName, 
                   match.info.teams[teamIndices[idx]].win === true? 1 : 0,
                   playerRef.kills,
                   playerRef.deaths,
-                  playerRef.assists]);
+                  playerRef.assists,
+                  playerRef.totalMinionsKilled,
+                  playerRef.timePlayed
+               ]);
       })
 
-      console.log(allChampionStats)
+
+      // Champstats table
+      const championId = 0;
+      const name = 1;
+      const wins = 2;
+      const kills = 3;
+      const deaths = 4;
+      const assists = 5;
+      const cs = 6;
+      const timePlayed = 7;
 
       // remove duplicates
-      let allChamps = allChampionStats.map(champWin => champWin[0]);
+      let allChamps = allChampionStats.map(champWin => champWin[name]);
       let allUniqueChampionNames = allChamps.filter((championName, idx) => allChamps.findIndex((champName) => championName === champName) === idx);
 
-      console.log(allUniqueChampionNames)
 
-      //all unique champs with name, wins, games, kda, avg kills, avg deaths, avg assists
+      //all unique champs with name, wins, games, kda, avg kills, avg deaths, avg assists, avg cs, time played
       const uniqueChampStats = allUniqueChampionNames.map(champ => {
+            
 
-            // Champstats: name, wins, k, d, a
-            const filterByChampName = allChampionStats.filter(champStats => champStats[0] === champ);
-            const filterByChampNameNWin = allChampionStats.filter(champStats => champStats[0] === champ && champStats[1]=== 1);
-            console.log(filterByChampName.reduce((cum, cur) => cum + cur[2] , 0))
-            const sumKills = filterByChampName.reduce((cum, cur) => cum + cur[2] , 0);
-            const sumDeaths = filterByChampName.reduce((cum, cur) => cum + cur[3] , 0);
-            const sumAssists = filterByChampName.reduce((cum, cur) => cum + cur[4] , 0);
+            const filterByChampName = allChampionStats.filter(champStats => champStats[name] === champ);
+            const filterByChampNameNWin = allChampionStats.filter(champStats => champStats[name] === champ && champStats[wins]=== 1); 
+
+            const sumKills = filterByChampName.reduce((cum, cur) => cum + cur[kills] , 0);
+            const sumDeaths = filterByChampName.reduce((cum, cur) => cum + cur[deaths] , 0);
+            const sumAssists = filterByChampName.reduce((cum, cur) => cum + cur[assists] , 0);
+            const sumCS = filterByChampName.reduce((cum, cur) => cum + cur[cs], 0);
+            const sumTime = filterByChampName.reduce((cum, cur) => cum + cur[timePlayed], 0);
 
             return([champ, 
                filterByChampNameNWin.length,
@@ -241,26 +257,52 @@ function PlayerMatchSummary({playerObj}){
                sumKills/filterByChampName.length,
                sumDeaths/filterByChampName.length,
                sumAssists/filterByChampName.length,
+               sumCS/filterByChampName.length,
+               sumCS/sumTime*60
             ])
          }
       )
       console.log(uniqueChampStats)
+
       return(
-         <Container>
-            {uniqueChampStats.sort((a,b) => b[2] - a[2]).map(champStats =>
-               <Row>
-                  <Col>{champStats[0]}</Col>
-                  <Col>
-                     <Row>{champStats[3].toFixed(2)}:1 KDA</Row>
-                     <Row>{champStats[4].toFixed(1)}/{champStats[6].toFixed(1)}/{champStats[5].toFixed(1)}</Row>
-                  </Col>
-                  <Col>
-                     <Row>{(champStats[1]/champStats[2] * 100).toFixed(0)}%</Row>
-                     <Row>{champStats[2]} played</Row>
-                  </Col>
-               </Row>
-            )}
-         </Container>
+         <Table striped style = {{width:"375px", fontSize: "12px"}}>
+            <tbody>
+               {uniqueChampStats.sort((a,b) => b[2] - a[2]).map(champStats =>
+                  <tr>
+                     <Row>
+                        <Col xs = {5}>
+                           <Row style={{ alignItems: 'center' }}>
+                              <Col>
+                                 <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats[0]}_0.jpg`}></img>
+                              </Col>
+                              <Col style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                 <Row> <b>{champStats[0]}</b></Row>
+                                 <Row>{champStats[7].toFixed(1)}({champStats[8].toFixed(1)})</Row>
+                              </Col>
+                           </Row>
+                        </Col>
+                        <Col xs = {3} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                           <Row style = {{color: champStats[3] < 3? "gray": 
+                                          champStats[3] < 4? "#00BBA3":
+                                          champStats[3] < 5? "b#0093FF":
+                                          champStats[3] < 6? "#F06F00":
+                                          "#E84057",
+                                          }}>
+                                 <b>{champStats[3].toFixed(2)}:1 KDA </b>
+                           </Row>
+                           <Row>
+                              {champStats[4].toFixed(1)} / {champStats[6].toFixed(1)} / {champStats[5].toFixed(1)}
+                           </Row>
+                        </Col>
+                        <Col xs = {4} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                           <Row style = {{color: champStats[1]/champStats[2] >= .60?  "#D31A45": "black"}}>{(champStats[1]/champStats[2] * 100).toFixed(0)}%</Row>
+                           <Row>{champStats[2]} played</Row>
+                        </Col>
+                     </Row>
+                  </tr>
+               )}
+            </tbody>
+         </Table>
       )
    }
 
