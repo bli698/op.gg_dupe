@@ -253,7 +253,15 @@ export function PlayerMatchSummary(){
                   playerRef.deaths,
                   playerRef.assists,
                   playerRef.totalMinionsKilled,
-                  playerRef.timePlayed
+                  playerRef.timePlayed,
+                  playerRef.goldEarned,
+                  playerRef.goldSpent,
+                  playerRef.totalDamageDealt,
+                  playerRef.totalDamageTaken,
+                  playerRef.doubleKills,
+                  playerRef.tripleKills,
+                  playerRef.quadraKills,
+                  playerRef.pentaKills,
                ]);
       })
 
@@ -267,6 +275,14 @@ export function PlayerMatchSummary(){
       const assists = 5;
       const cs = 6;
       const timePlayed = 7;
+      const goldEarned = 8;
+      const goldSpent = 9;
+      const totalDamageDealt = 10;
+      const totalDamageTaken = 11;
+      const doubleKills = 12;
+      const tripleKills = 13;
+      const quadraKills = 14;
+      const pentaKills = 15;
 
       // remove duplicates
       let allChamps = allChampionStats.map(champWin => champWin[name]);
@@ -285,12 +301,29 @@ export function PlayerMatchSummary(){
             const sumAssists = filterByChampName.reduce((cum, cur) => cum + cur[assists] , 0);
             const sumCS = filterByChampName.reduce((cum, cur) => cum + cur[cs], 0);
             const sumTime = filterByChampName.reduce((cum, cur) => cum + cur[timePlayed], 0);
+            const sumGoldEarned = filterByChampName.reduce((cum, cur) => cum + cur[goldEarned], 0);
+            const sumTotalDamageDealt = filterByChampName.reduce((cum, cur) => cum + cur[totalDamageDealt], 0);
+            const sumTotalDamageTaken = filterByChampName.reduce((cum, cur) => cum + cur[totalDamageTaken], 0);
+            const sumDoubleKills = filterByChampName.reduce((cum, cur) => cum + cur[doubleKills], 0);
+            const sumTripleKills = filterByChampName.reduce((cum, cur) => cum + cur[tripleKills], 0);
+            const sumQuadraKills = filterByChampName.reduce((cum, cur) => cum + cur[quadraKills], 0);
+            const sumPentaKills = filterByChampName.reduce((cum, cur) => cum + cur[pentaKills], 0);
 
             const avgKills = sumKills/filterByChampName.length;
             const avgDeaths = sumDeaths/filterByChampName.length;
             const avgAssists = sumAssists/filterByChampName.length;
             const avgCS =  sumCS/filterByChampName.length;
             const csPerMin = sumCS/sumTime*60;
+            const avgGold = sumGoldEarned/filterByChampName.length;
+            const goldPerMin = sumGoldEarned/sumTime * 60;
+            const avgTotalDamageDealt = sumTotalDamageDealt/filterByChampName.length;
+            const avgTotalDamageTaken = sumTotalDamageTaken/filterByChampName.length;
+
+            const maxKills = Math.max(filterByChampName.map(game => game[kills]));
+            const maxDeaths = Math.max(filterByChampName.map(game => game[deaths]));
+
+            console.log(filterByChampName)
+            console.log(filterByChampName.map(game => game[kills]))
 
             return([champ, 
                filterByChampNameNWin.length,
@@ -300,7 +333,17 @@ export function PlayerMatchSummary(){
                avgDeaths,
                avgAssists,
                avgCS,
-               csPerMin
+               csPerMin,
+               avgGold,
+               goldPerMin,
+               maxKills,
+               maxDeaths,
+               avgTotalDamageDealt,
+               avgTotalDamageTaken,
+               sumDoubleKills,
+               sumTripleKills,
+               sumQuadraKills,
+               sumPentaKills
             ])
          }
       )
@@ -321,6 +364,16 @@ export function PlayerMatchSummary(){
       const avgAssists = 6;
       const avgCS = 7;
       const csPerMin = 8;
+      const avgGold = 9;
+      const goldPerMin = 10;
+      const maxKills = 11;
+      const maxDeaths = 12;
+      const avgTotalDamageDealt = 13;
+      const avgTotalDamageTaken = 14;
+      const totalDoubleKills = 15;
+      const totalTripleKills = 16;
+      const totalQuadraKills = 17;
+      const totalPentaKills = 18;
 
 
       return(
@@ -379,7 +432,7 @@ export function PlayerMatchSummary(){
                </tbody>
             </Table>     
          :     
-            <Table striped style = {{width:"375px", fontSize: "12px"}}>
+            <Table striped  hover style = {{width:"1000px", fontSize: "12px"}}>
                 <thead>
                   <tr>
                      <th>#</th>
@@ -401,8 +454,58 @@ export function PlayerMatchSummary(){
                 <tbody>
                   {uniqueChampStats.sort((a,b) => b[2] - a[2]).map((champStats, idx) =>
                         <tr>
-                           <td>{idx}</td>
-                           <td>{champStats}</td>
+                           <td>{idx + 1}</td>
+                           <td>
+                              <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats[champName]}_0.jpg`}></img>
+                              &nbsp;
+                              {champStats[champName]}
+                           </td>
+                           <td>
+                              {champStats[champGames]}
+                           </td>
+                           <td>
+                              <Row style = {{color: champStats[KDA] < 3? "gray": 
+                                             champStats[KDA] < 4? "#00BBA3":
+                                             champStats[KDA] < 5? "#0093FF":
+                                             champStats[KDA] < 6? "#F06F00":
+                                             "#E84057",
+                                             }}>
+                                    <b>{champStats[KDA].toFixed(2)}:1</b>
+                              </Row>
+                              <Row>
+                                 {champStats[avgKills].toFixed(1)} / {champStats[avgDeaths].toFixed(1)} / {champStats[avgAssists].toFixed(1)}
+                              </Row>
+                           </td>
+                           <td>
+                              {champStats[avgGold]} ({champStats[goldPerMin].toFixed(1)})
+                           </td>
+                           <td>
+                              {champStats[avgCS]} ({champStats[csPerMin].toFixed(1)})
+                           </td>
+                           <td>
+                              {champStats[maxKills]}
+                           </td>
+                           <td>
+                              {champStats[maxDeaths]}
+                           </td>
+                           <td>
+                              {champStats[avgTotalDamageDealt].toFixed(0)}
+                           </td>
+                           <td>
+                              {champStats[avgTotalDamageTaken].toFixed(0)}
+                           </td>
+                           <td>
+                              {champStats[totalDoubleKills]}
+                           </td>
+                           <td>
+                              {champStats[totalTripleKills]}
+                           </td>
+                           <td>
+                              {champStats[totalQuadraKills]}
+                           </td>
+                           <td>
+                              {champStats[totalPentaKills]}
+                           </td>
                         </tr>
                      )}
                </tbody>
