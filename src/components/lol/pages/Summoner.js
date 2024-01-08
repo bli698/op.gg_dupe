@@ -477,36 +477,16 @@ export function PlayerMatchSummary(){
                                  {champStats[avgKills].toFixed(1)} / {champStats[avgDeaths].toFixed(1)} / {champStats[avgAssists].toFixed(1)}
                               </Row>
                            </td>
-                           <td>
-                              {champStats[avgGold].toFixed(0)} ({champStats[goldPerMin].toFixed(1)})
-                           </td>
-                           <td>
-                              {champStats[avgCS].toFixed(1)} ({champStats[csPerMin].toFixed(1)})
-                           </td>
-                           <td>
-                              {champStats[maxKills]}
-                           </td>
-                           <td>
-                              {champStats[maxDeaths]}
-                           </td>
-                           <td>
-                              {champStats[avgTotalDamageDealt].toFixed(0)}
-                           </td>
-                           <td>
-                              {champStats[avgTotalDamageTaken].toFixed(0)}
-                           </td>
-                           <td>
-                              {champStats[totalDoubleKills]}
-                           </td>
-                           <td>
-                              {champStats[totalTripleKills]}
-                           </td>
-                           <td>
-                              {champStats[totalQuadraKills]}
-                           </td>
-                           <td>
-                              {champStats[totalPentaKills]}
-                           </td>
+                           <td> {champStats[avgGold].toFixed(0)} ({champStats[goldPerMin].toFixed(1)})</td>
+                           <td> {champStats[avgCS].toFixed(1)} ({champStats[csPerMin].toFixed(1)}) </td>
+                           <td> {champStats[maxKills]} </td>
+                           <td> {champStats[maxDeaths]}</td>
+                           <td> {champStats[avgTotalDamageDealt].toFixed(0)} </td>
+                           <td> {champStats[avgTotalDamageTaken].toFixed(0)} </td>
+                           <td> {champStats[totalDoubleKills]} </td>
+                           <td> {champStats[totalTripleKills]} </td>
+                           <td> {champStats[totalQuadraKills]} </td>
+                           <td> {champStats[totalPentaKills]} </td>
                         </tr>
                      )}
                </tbody>
