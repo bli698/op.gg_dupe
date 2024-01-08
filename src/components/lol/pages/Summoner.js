@@ -189,7 +189,29 @@ function PlayerRank({playerObj}){
       )
    }
 
-function PlayerMatchSummary({playerObj}){
+export function PlayerMatchSummary(){
+
+   const [playerObj, setPlayerObj] = useState({});
+   const params = useParams();
+   console.log(params);
+
+   // get user info: ids etc
+   useEffect(() => {
+      async function getSummInfo() {
+         const res = await SummonerInfo(params.name);
+         setPlayerObj(res);
+
+         console.log(res);
+      };
+
+      getSummInfo();
+   }, []);
+
+   const navigate = useNavigate();
+   // showMore button
+   const showMore = () => navigate("./champions");
+   const urlSplit = window.location.href.split("/");
+   const  lastSegment = urlSplit[urlSplit.length - 1];
 
    //queueid table
    const seasonS2 = "Season S2";
@@ -205,7 +227,7 @@ function PlayerMatchSummary({playerObj}){
    if(matches){
 
       // filter by Q type
-      const qFilteredMatches = queueId === 420 || queueId === 420? matches.filter(match => match.info.queueId === queueId): matches;
+      const qFilteredMatches = queueId === Solo || queueId === Flex? matches.filter(match => match.info.queueId === queueId): matches;
 
 
       const playerIndices =  qFilteredMatches.map(match => { 
@@ -289,59 +311,103 @@ function PlayerMatchSummary({playerObj}){
          setQueueId(parseInt(k));
       }
 
+      //champStatsTable
+      const champName = 0;
+      const champWins = 1;
+      const champGames = 2;
+      const KDA = 3;
+      const avgKills = 4;
+      const avgDeaths = 5;
+      const avgAssists = 6;
+      const avgCS = 7;
+      const csPerMin = 8;
+
+
       return(
-         <Table striped style = {{width:"375px", fontSize: "12px"}}>
-               <Tabs
-                  defaultActiveKey="profile"
-                  id="fill-tab-example"
-                  activeKey={queueId}
-                  onSelect={(k) => tabClickHandler(k)}
-                  fill
-               >
-                  <Tab eventKey= "Season S2" title="Season S2" >
-                  </Tab>
-                  <Tab eventKey="420" title="Ranked Solo">
-                  </Tab>
-                  <Tab eventKey="440" title="Ranked Flex">
-                  </Tab>
-            </Tabs>
-            <tbody>
-               {uniqueChampStats.sort((a,b) => b[2] - a[2]).map(champStats =>
+         lastSegment !== "champions"?
+            <Table striped style = {{width:"375px", fontSize: "12px"}}>
+                  <Tabs
+                     defaultActiveKey="profile"
+                     id="fill-tab-example"
+                     activeKey={queueId}
+                     onSelect={(k) => tabClickHandler(k)}
+                     fill
+                  >
+                     <Tab eventKey= "Season S2" title="Season S2" >
+                     </Tab>
+                     <Tab eventKey="420" title="Ranked Solo">
+                     </Tab>
+                     <Tab eventKey="440" title="Ranked Flex">
+                     </Tab>
+               </Tabs>
+               <tbody>
+                  {uniqueChampStats.sort((a,b) => b[2] - a[2]).slice(0, 7).map(champStats =>
+                     <tr>
+                        <Row>
+                           <Col xs = {5}>
+                              <Row style={{ alignItems: 'center' }}>
+                                 <Col>
+                                    <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats[champName]}_0.jpg`}></img>
+                                 </Col>
+                                 <Col style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <Row> <b>{champStats[champName]}</b></Row>
+                                    <Row>{champStats[avgCS].toFixed(1)}({champStats[csPerMin].toFixed(1)})</Row>
+                                 </Col>
+                              </Row>
+                           </Col>
+                           <Col xs = {3} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                              <Row style = {{color: champStats[KDA] < 3? "gray": 
+                                             champStats[KDA] < 4? "#00BBA3":
+                                             champStats[KDA] < 5? "#0093FF":
+                                             champStats[KDA] < 6? "#F06F00":
+                                             "#E84057",
+                                             }}>
+                                    <b>{champStats[KDA].toFixed(2)}:1 KDA </b>
+                              </Row>
+                              <Row>
+                                 {champStats[avgKills].toFixed(1)} / {champStats[avgDeaths].toFixed(1)} / {champStats[avgAssists].toFixed(1)}
+                              </Row>
+                           </Col>
+                           <Col xs = {4} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                              <Row style = {{color: champStats[champWins]/champStats[champGames] >= .60?  "#D31A45": "black"}}>{(champStats[champWins]/champStats[champGames] * 100).toFixed(0)}%</Row>
+                              <Row>{champStats[champGames]} played</Row>
+                           </Col>
+                        </Row>
+                     </tr>
+                  )}
+                  <tr><Row><Button onClick={showMore} variant="secondary">Show More</Button></Row></tr>
+               </tbody>
+            </Table>     
+         :     
+            <Table striped style = {{width:"375px", fontSize: "12px"}}>
+                <thead>
                   <tr>
-                     <Row>
-                        <Col xs = {5}>
-                           <Row style={{ alignItems: 'center' }}>
-                              <Col>
-                                 <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats[0]}_0.jpg`}></img>
-                              </Col>
-                              <Col style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                 <Row> <b>{champStats[0]}</b></Row>
-                                 <Row>{champStats[7].toFixed(1)}({champStats[8].toFixed(1)})</Row>
-                              </Col>
-                           </Row>
-                        </Col>
-                        <Col xs = {3} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                           <Row style = {{color: champStats[3] < 3? "gray": 
-                                          champStats[3] < 4? "#00BBA3":
-                                          champStats[3] < 5? "#0093FF":
-                                          champStats[3] < 6? "#F06F00":
-                                          "#E84057",
-                                          }}>
-                                 <b>{champStats[3].toFixed(2)}:1 KDA </b>
-                           </Row>
-                           <Row>
-                              {champStats[4].toFixed(1)} / {champStats[5].toFixed(1)} / {champStats[6].toFixed(1)}
-                           </Row>
-                        </Col>
-                        <Col xs = {4} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                           <Row style = {{color: champStats[1]/champStats[2] >= .60?  "#D31A45": "black"}}>{(champStats[1]/champStats[2] * 100).toFixed(0)}%</Row>
-                           <Row>{champStats[2]} played</Row>
-                        </Col>
-                     </Row>
+                     <th>#</th>
+                     <th>Champion</th>
+                     <th>Played</th>
+                     <th>KDA</th>
+                     <th>Gold</th>
+                     <th>CS</th>
+                     <th>Max Kills</th>
+                     <th>Max Deaths</th>
+                     <th>Average Damage Dealt</th>
+                     <th>Average Damage Taken</th>
+                     <th>Double Kill</th>
+                     <th>Triple Kill</th>
+                     <th>Quadra Kill</th>
+                     <th>Penta Kill</th>
                   </tr>
-               )}
-            </tbody>
-         </Table>
+                </thead>
+                <tbody>
+                  {uniqueChampStats.sort((a,b) => b[2] - a[2]).map((champStats, idx) =>
+                        <tr>
+                           <td>{idx}</td>
+                           <td>{champStats}</td>
+                        </tr>
+                     )}
+               </tbody>
+            </Table>    
+        
       )
    }
 
@@ -366,7 +432,6 @@ function Summoner() {
 
       getSummInfo();
    }, []);
-
 
    const update = async() =>{
 
@@ -421,10 +486,7 @@ function Summoner() {
 
    }
 
-
    return (
-
-
       <>
          <GameNav />
          <div className="searchRow">
@@ -434,8 +496,7 @@ function Summoner() {
          <LeagueNav />
          <PlayerHeader playerObj={playerObj} name={params.name || 'summary'} update = {update}/>
          <PlayerRank playerObj = {playerObj}/>
-         <PlayerMatchSummary playerObj={playerObj}></PlayerMatchSummary>
-         
+         <PlayerMatchSummary playerObj = {playerObj}></PlayerMatchSummary>
       </>
    )
 }

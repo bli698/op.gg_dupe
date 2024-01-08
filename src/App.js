@@ -7,6 +7,7 @@ import {Route, Routes} from 'react-router-dom';
 import Home from './components/lol/pages/Home';
 import Summoner from './components/lol/pages/Summoner';
 import { QueryClient, QueryClientProvider } from "react-query";
+import { PlayerMatchSummary } from './components/lol/pages/Summoner';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Route path='/home' Component={Home} />
             <Route path='/champions' Component={Home} />
             <Route path='/summoners/:name/:playerTab?' Component={Summoner} />
+            <Route path = '/summoners/:name/champions' Component={PlayerMatchSummary}/>
           </Routes>
         </RegionContextProvider>
       </LeagueTabContextProvider>
