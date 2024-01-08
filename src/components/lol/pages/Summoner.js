@@ -319,11 +319,12 @@ export function PlayerMatchSummary(){
             const avgTotalDamageDealt = sumTotalDamageDealt/filterByChampName.length;
             const avgTotalDamageTaken = sumTotalDamageTaken/filterByChampName.length;
 
-            const maxKills = Math.max(filterByChampName.map(game => game[kills]));
-            const maxDeaths = Math.max(filterByChampName.map(game => game[deaths]));
+            const champKills = filterByChampName.map(game => game[kills]);
+            const champDeaths = filterByChampName.map(game => game[deaths]);
+            console.log(champKills)
 
-            console.log(filterByChampName)
-            console.log(filterByChampName.map(game => game[kills]))
+            const maxKills = Math.max(...champKills);
+            const maxDeaths = Math.max(...champDeaths);
 
             return([champ, 
                filterByChampNameNWin.length,
@@ -477,10 +478,10 @@ export function PlayerMatchSummary(){
                               </Row>
                            </td>
                            <td>
-                              {champStats[avgGold]} ({champStats[goldPerMin].toFixed(1)})
+                              {champStats[avgGold].toFixed(0)} ({champStats[goldPerMin].toFixed(1)})
                            </td>
                            <td>
-                              {champStats[avgCS]} ({champStats[csPerMin].toFixed(1)})
+                              {champStats[avgCS].toFixed(1)} ({champStats[csPerMin].toFixed(1)})
                            </td>
                            <td>
                               {champStats[maxKills]}
