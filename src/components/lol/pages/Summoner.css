@@ -11,3 +11,11 @@ div.col-md-9{
 div.card-title{
     margin-top: 8px;
 }
+
+div.row{
+    align-items: center;
+}
+
+td{
+    vertical-align: middle;
+}

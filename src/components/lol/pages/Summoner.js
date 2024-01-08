@@ -75,11 +75,12 @@ import logoLight from "../../../images/logoLight.png";
 import { SummonerInfo, RankInfo, MatchIDs, Matches } from "../ProxyCalls";
 import { useRegionContext, useUpdateRegionContext } from "../../RegionContext";
 import { useLeagueTabContext, useUpdateLeagueTabContext } from "../LeagueTabContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect,  useRef  } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useData, setData } from "../../../utilities/database";
 import Card from 'react-bootstrap/Card';
 import "./Summoner.css"
+import * as d3 from 'd3';
 
 function MiniSearchBar() {
    const selectedRegion = useRegionContext();
@@ -454,17 +455,20 @@ export function PlayerMatchSummary(){
                 </thead>
                 <tbody>
                   {uniqueChampStats.sort((a,b) => b[2] - a[2]).map((champStats, idx) =>
-                        <tr>
+                        <tr height = "50px" >
                            <td>{idx + 1}</td>
-                           <td>
+                           <td width = "100px">
                               <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats[champName]}_0.jpg`}></img>
                               &nbsp;
-                              {champStats[champName]}
+                              <b>{champStats[champName]}</b>
                            </td>
-                           <td>
-                              {champStats[champGames]}
+                           <td width = "175px">
+                              <Row>
+                                 <Col style = {{paddingRight: "4px"}}><BarChartWL games = {champStats[champGames]} wins = {champStats[champWins]}/></Col>
+                                 <Col style = {{paddingLeft: "4px", color: champStats[champWins]/champStats[champGames] >= .60?  "#D31A45": "black"}}>{(champStats[champWins]/champStats[champGames]*100).toFixed(1)}% </Col>
+                              </Row>
                            </td>
-                           <td>
+                           <td width = "100px">
                               <Row style = {{color: champStats[KDA] < 3? "gray": 
                                              champStats[KDA] < 4? "#00BBA3":
                                              champStats[KDA] < 5? "#0093FF":
@@ -486,7 +490,7 @@ export function PlayerMatchSummary(){
                            <td> {champStats[totalDoubleKills]} </td>
                            <td> {champStats[totalTripleKills]} </td>
                            <td> {champStats[totalQuadraKills]} </td>
-                           <td> {champStats[totalPentaKills]} </td>
+                           <td> {champStats[totalPentaKills]}</td>
                         </tr>
                      )}
                </tbody>
@@ -495,6 +499,78 @@ export function PlayerMatchSummary(){
       )
    }
 
+}
+
+function BarChartWL({games, wins}){
+
+   const svgRef = useRef();
+
+   useEffect(() => {
+   
+     // Calculate the ratios
+     const total = games;
+     const winRatio = (wins / total) * 100;
+     const lossRatio = ((games - wins) / total) * 100;
+ 
+     // Set up SVG dimensions
+     const svgWidth = 100;
+     const svgHeight = 50;
+ 
+     // Set up margins
+     const margin = { top: 0, right: 0, bottom: 0, left: 0 };
+ 
+     // Calculate chart dimensions
+     const width = svgWidth - margin.left - margin.right;
+     const height = svgHeight - margin.top - margin.bottom;
+ 
+     // Create the SVG element
+     const svg = d3.select(svgRef.current)
+       .attr('width', svgWidth)
+       .attr('height', svgHeight)
+       .append('g')
+       .attr('transform', `translate(${margin.left},${margin.top})`);
+
+     svg.selectAll("*").remove();
+ 
+     // Create bars
+     svg.append('rect')
+       .attr('x', 0)
+       .attr('y', height/4)
+       .attr('width', width * (winRatio / 100))
+       .attr('height', height / 2)
+       .attr('fill', 'steelblue')
+       .attr("rx", 5)
+       .attr("ry", 5);
+ 
+     svg.append('rect')
+       .attr('x', width - (width * (lossRatio / 100)))
+       .attr('y', height/4)
+       .attr('width', width * (lossRatio / 100))
+       .attr('height', height / 2)
+       .attr('fill', 'red')
+       .attr("rx", 5)
+       .attr("ry", 5);
+ 
+     // Add text labels
+     if(wins > 0){
+         svg.append('text')
+         .attr('x', 5)
+         .attr('y', height / 1.75)
+         .text(`${wins}W`);
+     }
+
+     if(games - wins > 0){
+         svg.append("text")
+         .attr("x", width - 30)
+         .attr("y", height/ 1.75 )
+         .text(`${games - wins} L`)
+     }
+
+   }, [games, wins]);
+      
+    return (
+      <svg ref={svgRef}></svg>
+   );
 }
 
 function Summoner() {
