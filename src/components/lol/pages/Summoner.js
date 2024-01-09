@@ -326,27 +326,30 @@ export function PlayerMatchSummary(){
 
             const maxKills = Math.max(...champKills);
             const maxDeaths = Math.max(...champDeaths);
+             //champStatsTable
 
-            return([champ, 
-               filterByChampNameNWin.length,
-               filterByChampName.length,
-               avgDeaths !== 0 ? (avgKills + avgAssists) / avgDeaths: avgKills + avgAssists ,
-               avgKills,
-               avgDeaths,
-               avgAssists,
-               avgCS,
-               csPerMin,
-               avgGold,
-               goldPerMin,
-               maxKills,
-               maxDeaths,
-               avgTotalDamageDealt,
-               avgTotalDamageTaken,
-               sumDoubleKills,
-               sumTripleKills,
-               sumQuadraKills,
-               sumPentaKills
-            ])
+            return({
+               champName: champ, 
+               champWin: filterByChampNameNWin.length,
+               champGames: filterByChampName.length,
+               KDA: avgDeaths !== 0 ? (avgKills + avgAssists) / avgDeaths: avgKills + avgAssists ,
+               avgKills: avgKills,
+               avgDeaths: avgDeaths,
+               avgAssists: avgAssists,
+               avgCS: avgCS,
+               csPerMin: csPerMin,
+               avgGold: avgGold,
+               goldPerMin: goldPerMin,
+               maxKills: maxKills,
+               maxDeaths: maxDeaths,
+               avgTotalDamageDealt: avgTotalDamageDealt,
+               avgTotalDamageTaken: avgTotalDamageTaken,
+               totalDoubleKills: sumDoubleKills,
+               totalTripleKills: sumTripleKills,
+               totalQuadraKills: sumQuadraKills,
+               totalPentaKills: sumPentaKills
+            }
+            )
          }
       )
       console.log(uniqueChampStats)
@@ -355,28 +358,6 @@ export function PlayerMatchSummary(){
          console.log(k);
          setQueueId(parseInt(k));
       }
-
-      //champStatsTable
-      const champName = 0;
-      const champWins = 1;
-      const champGames = 2;
-      const KDA = 3;
-      const avgKills = 4;
-      const avgDeaths = 5;
-      const avgAssists = 6;
-      const avgCS = 7;
-      const csPerMin = 8;
-      const avgGold = 9;
-      const goldPerMin = 10;
-      const maxKills = 11;
-      const maxDeaths = 12;
-      const avgTotalDamageDealt = 13;
-      const avgTotalDamageTaken = 14;
-      const totalDoubleKills = 15;
-      const totalTripleKills = 16;
-      const totalQuadraKills = 17;
-      const totalPentaKills = 18;
-
 
       return(
          lastSegment !== "champions"?
@@ -396,36 +377,36 @@ export function PlayerMatchSummary(){
                      </Tab>
                </Tabs>
                <tbody>
-                  {uniqueChampStats.sort((a,b) => b[2] - a[2]).slice(0, 7).map(champStats =>
+                  {uniqueChampStats.sort((a,b) => b.champGames - a.champGames).slice(0, 7).map(champStats =>
                      <tr>
                         <Row>
                            <Col xs = {5}>
                               <Row style={{ alignItems: 'center' }}>
                                  <Col>
-                                    <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats[champName]}_0.jpg`}></img>
+                                    <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats.champName}_0.jpg`}></img>
                                  </Col>
                                  <Col style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <Row> <b>{champStats[champName]}</b></Row>
-                                    <Row>{champStats[avgCS].toFixed(1)}({champStats[csPerMin].toFixed(1)})</Row>
+                                    <Row> <b>{champStats.champName}</b></Row>
+                                    <Row>{champStats.avgCS.toFixed(1)}({champStats.csPerMin.toFixed(1)})</Row>
                                  </Col>
                               </Row>
                            </Col>
                            <Col xs = {3} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                              <Row style = {{color: champStats[KDA] < 3? "gray": 
-                                             champStats[KDA] < 4? "#00BBA3":
-                                             champStats[KDA] < 5? "#0093FF":
-                                             champStats[KDA] < 6? "#F06F00":
+                              <Row style = {{color: champStats.KDA < 3? "gray": 
+                                             champStats.KDA < 4? "#00BBA3":
+                                             champStats.KDA < 5? "#0093FF":
+                                             champStats.KDA < 6? "#F06F00":
                                              "#E84057",
                                              }}>
-                                    <b>{champStats[KDA].toFixed(2)}:1 KDA </b>
+                                    <b>{champStats.KDA.toFixed(2)}:1 KDA </b>
                               </Row>
                               <Row>
-                                 {champStats[avgKills].toFixed(1)} / {champStats[avgDeaths].toFixed(1)} / {champStats[avgAssists].toFixed(1)}
+                                 {champStats.avgKills.toFixed(1)} / {champStats.avgDeaths.toFixed(1)} / {champStats.avgAssists.toFixed(1)}
                               </Row>
                            </Col>
                            <Col xs = {4} style={{display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                              <Row style = {{color: champStats[champWins]/champStats[champGames] >= .60?  "#D31A45": "black"}}>{(champStats[champWins]/champStats[champGames] * 100).toFixed(0)}%</Row>
-                              <Row>{champStats[champGames]} played</Row>
+                              <Row style = {{color: champStats.champWin/champStats.champGames >= .60?  "#D31A45": "black"}}>{(champStats.champWin/champStats.champGames * 100).toFixed(0)}%</Row>
+                              <Row>{champStats.champGames} played</Row>
                            </Col>
                         </Row>
                      </tr>
@@ -454,43 +435,43 @@ export function PlayerMatchSummary(){
                   </tr>
                 </thead>
                 <tbody>
-                  {uniqueChampStats.sort((a,b) => b[2] - a[2]).map((champStats, idx) =>
+                  {uniqueChampStats.sort((a,b) => b.champGames - a.champGames).map((champStats, idx) =>
                         <tr height = "50px" >
                            <td>{idx + 1}</td>
                            <td width = "100px">
-                              <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats[champName]}_0.jpg`}></img>
+                              <img style = {{height: "32px", width: "32px", borderRadius: "50%"}} src = {`/tiles/${champStats.champName}_0.jpg`}></img>
                               &nbsp;
-                              <b>{champStats[champName]}</b>
+                              <b>{champStats.champName}</b>
                            </td>
                            <td width = "175px">
                               <Row>
-                                 <Col style = {{paddingRight: "4px"}}><BarChartWL games = {champStats[champGames]} wins = {champStats[champWins]}/></Col>
-                                 <Col style = {{paddingLeft: "4px", color: champStats[champWins]/champStats[champGames] >= .60?  "#D31A45": "black"}}>{(champStats[champWins]/champStats[champGames]*100).toFixed(1)}% </Col>
+                                 <Col style = {{paddingRight: "4px"}}><BarChartWL games = {champStats.champGames} wins = {champStats.champWin}/></Col>
+                                 <Col style = {{paddingLeft: "4px", color: champStats.champWin/champStats.champGames >= .60?  "#D31A45": "black"}}>{(champStats.champWin/champStats.champGames * 100).toFixed(1)}% </Col>
                               </Row>
                            </td>
                            <td width = "100px">
-                              <Row style = {{color: champStats[KDA] < 3? "gray": 
-                                             champStats[KDA] < 4? "#00BBA3":
-                                             champStats[KDA] < 5? "#0093FF":
-                                             champStats[KDA] < 6? "#F06F00":
+                              <Row style = {{color: champStats.KDA < 3? "gray": 
+                                             champStats.KDA < 4? "#00BBA3":
+                                             champStats.KDA < 5? "#0093FF":
+                                             champStats.KDA < 6? "#F06F00":
                                              "#E84057",
                                              }}>
-                                    <b>{champStats[KDA].toFixed(2)}:1</b>
+                                    <b>{champStats.KDA.toFixed(2)}:1</b>
                               </Row>
                               <Row>
-                                 {champStats[avgKills].toFixed(1)} / {champStats[avgDeaths].toFixed(1)} / {champStats[avgAssists].toFixed(1)}
+                                 {champStats.avgKills.toFixed(1)} / {champStats.avgDeaths.toFixed(1)} / {champStats.avgAssists.toFixed(1)}
                               </Row>
                            </td>
-                           <td> {champStats[avgGold].toFixed(0)} ({champStats[goldPerMin].toFixed(1)})</td>
-                           <td> {champStats[avgCS].toFixed(1)} ({champStats[csPerMin].toFixed(1)}) </td>
-                           <td> {champStats[maxKills]} </td>
-                           <td> {champStats[maxDeaths]}</td>
-                           <td> {champStats[avgTotalDamageDealt].toFixed(0)} </td>
-                           <td> {champStats[avgTotalDamageTaken].toFixed(0)} </td>
-                           <td> {champStats[totalDoubleKills]} </td>
-                           <td> {champStats[totalTripleKills]} </td>
-                           <td> {champStats[totalQuadraKills]} </td>
-                           <td> {champStats[totalPentaKills]}</td>
+                           <td> {champStats.avgGold.toFixed(0)} ({champStats.goldPerMin.toFixed(1)})</td>
+                           <td> {champStats.avgCS.toFixed(1)} ({champStats.csPerMin.toFixed(1)}) </td>
+                           <td> {champStats.maxKills} </td>
+                           <td> {champStats.maxDeaths}</td>
+                           <td> {champStats.avgTotalDamageDealt.toFixed(0)} </td>
+                           <td> {champStats.avgTotalDamageTaken.toFixed(0)} </td>
+                           <td> {champStats.totalDoubleKills} </td>
+                           <td> {champStats.totalTripleKills} </td>
+                           <td> {champStats.totalQuadraKills} </td>
+                           <td> {champStats.totalPentaKills}</td>
                         </tr>
                      )}
                </tbody>
