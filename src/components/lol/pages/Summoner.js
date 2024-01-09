@@ -246,47 +246,28 @@ export function PlayerMatchSummary(){
       // champion names with win/loss, possibly with dups
       let allChampionStats =  qFilteredMatches.map((match,idx) =>{      
          const playerRef = match.info.participants[playerIndices[idx]]; 
-         return( [
-                  playerRef.championId,
-                  playerRef.championName, 
-                  match.info.teams[teamIndices[idx]].win === true? 1 : 0,
-                  playerRef.kills,
-                  playerRef.deaths,
-                  playerRef.assists,
-                  playerRef.totalMinionsKilled,
-                  playerRef.timePlayed,
-                  playerRef.goldEarned,
-                  playerRef.goldSpent,
-                  playerRef.totalDamageDealt,
-                  playerRef.totalDamageTaken,
-                  playerRef.doubleKills,
-                  playerRef.tripleKills,
-                  playerRef.quadraKills,
-                  playerRef.pentaKills,
-               ]);
+         return({
+                  championId: playerRef.championId,
+                  name: playerRef.championName, 
+                  wins: match.info.teams[teamIndices[idx]].win === true? 1 : 0,
+                  kills: playerRef.kills,
+                  deaths: playerRef.deaths,
+                  assists: playerRef.assists,
+                  cs: playerRef.totalMinionsKilled,
+                  timePlayed: playerRef.timePlayed,
+                  goldEarned: playerRef.goldEarned,
+                  goldSpent: playerRef.goldSpent,
+                  totalDamageDealt: playerRef.totalDamageDealt,
+                  totalDamageTaken: playerRef.totalDamageTaken,
+                  doubleKills: playerRef.doubleKills,
+                  tripleKills: playerRef.tripleKills,
+                  quadraKills: playerRef.quadraKills,
+                  pentaKills: playerRef.pentaKills,
+                  });
       })
 
-
-      // Champstats table
-      const championId = 0;
-      const name = 1;
-      const wins = 2;
-      const kills = 3;
-      const deaths = 4;
-      const assists = 5;
-      const cs = 6;
-      const timePlayed = 7;
-      const goldEarned = 8;
-      const goldSpent = 9;
-      const totalDamageDealt = 10;
-      const totalDamageTaken = 11;
-      const doubleKills = 12;
-      const tripleKills = 13;
-      const quadraKills = 14;
-      const pentaKills = 15;
-
       // remove duplicates
-      let allChamps = allChampionStats.map(champWin => champWin[name]);
+      let allChamps = allChampionStats.map(champWin => champWin.name);
       let allUniqueChampionNames = allChamps.filter((championName, idx) => allChamps.findIndex((champName) => championName === champName) === idx);
 
 
@@ -294,21 +275,21 @@ export function PlayerMatchSummary(){
       const uniqueChampStats = allUniqueChampionNames.map(champ => {
             
 
-            const filterByChampName = allChampionStats.filter(champStats => champStats[name] === champ);
-            const filterByChampNameNWin = allChampionStats.filter(champStats => champStats[name] === champ && champStats[wins]=== 1); 
+            const filterByChampName = allChampionStats.filter(champStats => champStats.name === champ);
+            const filterByChampNameNWin = allChampionStats.filter(champStats => champStats.name === champ && champStats.wins === 1); 
 
-            const sumKills = filterByChampName.reduce((cum, cur) => cum + cur[kills] , 0);
-            const sumDeaths = filterByChampName.reduce((cum, cur) => cum + cur[deaths] , 0);
-            const sumAssists = filterByChampName.reduce((cum, cur) => cum + cur[assists] , 0);
-            const sumCS = filterByChampName.reduce((cum, cur) => cum + cur[cs], 0);
-            const sumTime = filterByChampName.reduce((cum, cur) => cum + cur[timePlayed], 0);
-            const sumGoldEarned = filterByChampName.reduce((cum, cur) => cum + cur[goldEarned], 0);
-            const sumTotalDamageDealt = filterByChampName.reduce((cum, cur) => cum + cur[totalDamageDealt], 0);
-            const sumTotalDamageTaken = filterByChampName.reduce((cum, cur) => cum + cur[totalDamageTaken], 0);
-            const sumDoubleKills = filterByChampName.reduce((cum, cur) => cum + cur[doubleKills], 0);
-            const sumTripleKills = filterByChampName.reduce((cum, cur) => cum + cur[tripleKills], 0);
-            const sumQuadraKills = filterByChampName.reduce((cum, cur) => cum + cur[quadraKills], 0);
-            const sumPentaKills = filterByChampName.reduce((cum, cur) => cum + cur[pentaKills], 0);
+            const sumKills = filterByChampName.reduce((cum, cur) => cum + cur.kills , 0);
+            const sumDeaths = filterByChampName.reduce((cum, cur) => cum + cur.deaths , 0);
+            const sumAssists = filterByChampName.reduce((cum, cur) => cum + cur.assists , 0);
+            const sumCS = filterByChampName.reduce((cum, cur) => cum + cur.cs, 0);
+            const sumTime = filterByChampName.reduce((cum, cur) => cum + cur.timePlayed, 0);
+            const sumGoldEarned = filterByChampName.reduce((cum, cur) => cum + cur.goldEarned, 0);
+            const sumTotalDamageDealt = filterByChampName.reduce((cum, cur) => cum + cur.totalDamageDealt, 0);
+            const sumTotalDamageTaken = filterByChampName.reduce((cum, cur) => cum + cur.totalDamageTaken, 0);
+            const sumDoubleKills = filterByChampName.reduce((cum, cur) => cum + cur.doubleKills, 0);
+            const sumTripleKills = filterByChampName.reduce((cum, cur) => cum + cur.tripleKills, 0);
+            const sumQuadraKills = filterByChampName.reduce((cum, cur) => cum + cur.quadraKills, 0);
+            const sumPentaKills = filterByChampName.reduce((cum, cur) => cum + cur.pentaKills, 0);
 
             const avgKills = sumKills/filterByChampName.length;
             const avgDeaths = sumDeaths/filterByChampName.length;
@@ -320,8 +301,8 @@ export function PlayerMatchSummary(){
             const avgTotalDamageDealt = sumTotalDamageDealt/filterByChampName.length;
             const avgTotalDamageTaken = sumTotalDamageTaken/filterByChampName.length;
 
-            const champKills = filterByChampName.map(game => game[kills]);
-            const champDeaths = filterByChampName.map(game => game[deaths]);
+            const champKills = filterByChampName.map(game => game.kills);
+            const champDeaths = filterByChampName.map(game => game.deaths);
             console.log(champKills)
 
             const maxKills = Math.max(...champKills);
